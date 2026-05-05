@@ -9,17 +9,32 @@
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Noto Sans Lao',sans-serif;background:#0B1628;color:#fff;min-height:100vh;}
 
-    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-    .login-box{background:#13203A;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:36px 28px;width:100%;max-width:360px;text-align:center;}
-    .login-box h2{font-size:1.2rem;font-weight:900;margin-bottom:6px}
-    .login-box p{font-size:.78rem;color:rgba(255,255,255,0.45);margin-bottom:24px}
-    .login-box input{width:100%;background:#0B1628;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.85rem;outline:none;margin-bottom:10px;transition:border-color .18s;}
-    .login-box input:focus{border-color:rgba(255,107,26,0.5)}
-    .login-box input::placeholder{color:rgba(255,255,255,0.25)}
-    .login-err{color:#F85149;font-size:.75rem;margin-bottom:8px;display:none}
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;background:radial-gradient(ellipse at 50% 0%, rgba(255,107,26,0.08) 0%, transparent 60%), #0B1628;}
+    .login-box{background:#13203A;border:1px solid rgba(255,255,255,0.08);border-radius:18px;padding:40px 32px 36px;width:100%;max-width:360px;}
+    .login-logo{width:48px;height:48px;background:linear-gradient(135deg,#FF6B1A,#D94E00);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;}
+    .login-logo svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;}
+    .login-box h2{font-size:1.1rem;font-weight:900;margin-bottom:4px;text-align:center;}
+    .login-box p{font-size:.75rem;color:rgba(255,255,255,0.35);margin-bottom:28px;text-align:center;}
+    .input-wrap{position:relative;margin-bottom:10px;}
+    .input-wrap .input-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:rgba(255,255,255,0.25);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
+    .login-box input{width:100%;background:#0B1628;border:1px solid rgba(255,255,255,0.08);border-radius:9px;padding:11px 14px 11px 40px;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.85rem;outline:none;transition:border-color .18s;}
+    .login-box input:focus{border-color:rgba(255,107,26,0.45);background:#0d1a2e;}
+    .login-box input::placeholder{color:rgba(255,255,255,0.2)}
+    .eye-btn{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:4px;display:flex;align-items:center;color:rgba(255,255,255,0.25);transition:color .18s;}
+    .eye-btn:hover{color:rgba(255,255,255,0.55)}
+    .eye-btn svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+    .login-divider{border:none;border-top:1px solid rgba(255,255,255,0.05);margin:4px 0 14px;}
+    .login-err{color:#F85149;font-size:.74rem;margin-bottom:10px;display:none;text-align:center;background:rgba(248,81,73,0.07);border:1px solid rgba(248,81,73,0.15);border-radius:7px;padding:8px 10px;}
     .login-err.show{display:block}
-    .btn-orange{width:100%;padding:12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.9rem;font-weight:900;box-shadow:0 3px 14px rgba(217,78,0,0.3);transition:transform .18s,box-shadow .18s;}
-    .btn-orange:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(217,78,0,0.4)}
+    .btn-orange{width:100%;padding:13px;border-radius:9px;border:none;cursor:pointer;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.9rem;font-weight:900;box-shadow:0 3px 14px rgba(217,78,0,0.28);transition:transform .15s,box-shadow .15s;letter-spacing:.03em;}
+    .btn-orange:hover{transform:translateY(-1px);box-shadow:0 5px 22px rgba(217,78,0,0.42)}
+    .btn-orange:active{transform:translateY(0)}
+
+    .search-bar{position:relative;margin-bottom:14px;}
+    .search-bar input{width:100%;background:#13203A;border:1px solid rgba(255,255,255,0.08);border-radius:9px;padding:9px 14px 9px 38px;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;outline:none;transition:border-color .18s;}
+    .search-bar input:focus{border-color:rgba(255,107,26,0.4)}
+    .search-bar input::placeholder{color:rgba(255,255,255,0.25)}
+    .search-bar svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);width:15px;height:15px;stroke:rgba(255,255,255,0.3);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;pointer-events:none;}
 
     .app{display:none}
     .app.show{display:block}
@@ -123,10 +138,23 @@
 <!-- LOGIN -->
 <div class="login-wrap" id="loginWrap">
   <div class="login-box">
-    <h2>🔐 Admin</h2>
-    <p>ສະເພາະຜູ້ດູແລ</p>
-    <input type="text" id="lu" placeholder="Username" autocomplete="off"/>
-    <input type="password" id="lp" placeholder="Password" autocomplete="off"/>
+    <div class="login-logo">
+      <svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+    </div>
+    <h2>Admin Panel</h2>
+    <p>ສະເພາະຜູ້ດູແລລະບົບ</p>
+    <hr class="login-divider"/>
+    <div class="input-wrap">
+      <svg class="input-icon" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <input type="text" id="lu" placeholder="Username" autocomplete="off"/>
+    </div>
+    <div class="input-wrap">
+      <svg class="input-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <input type="password" id="lp" placeholder="Password" autocomplete="off"/>
+      <button class="eye-btn" id="eyeBtn" onclick="toggleEye()" type="button" tabindex="-1">
+        <svg id="eyeIcon" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+      </button>
+    </div>
     <div class="login-err" id="lerr">Username ຫຼື Password ບໍ່ຖືກ</div>
     <button class="btn-orange" onclick="doLogin()">ເຂົ້າລະບົບ</button>
   </div>
@@ -135,7 +163,7 @@
 <!-- APP -->
 <div class="app" id="appWrap">
   <div class="header">
-    <div class="header-brand">⚙️ Admin Panel</div>
+    <div class="header-brand">Admin Panel</div>
     <div class="header-right">
       <a href="index.html" target="_blank" class="btn-sm btn-view">ໜ້າຮ້ານ</a>
       <button class="btn-sm btn-logout" onclick="doLogout()">ອອກ</button>
@@ -143,10 +171,10 @@
   </div>
 
   <div class="tabs">
-    <div class="tab active" onclick="switchTab(this,'tabList')">📦 ລາຍການ</div>
-    <div class="tab" id="tabAddBtn" onclick="openAddTab()">➕ ເພີ່ມສິນຄ້າ</div>
-    <div class="tab" onclick="switchTab(this,'tabBanner')">🖼️ ແບນເນີ</div>
-    <div class="tab" onclick="switchTab(this,'tabAnnounce')">📢 ປະກາດ</div>
+    <div class="tab active" onclick="switchTab(this,'tabList')">ລາຍການ</div>
+    <div class="tab" id="tabAddBtn" onclick="openAddTab()">ເພີ່ມສິນຄ້າ</div>
+    <div class="tab" onclick="switchTab(this,'tabBanner')">ແບນເນີ</div>
+    <div class="tab" onclick="switchTab(this,'tabAnnounce')">ປະກາດ</div>
   </div>
 
   <!-- TAB: LIST -->
@@ -157,6 +185,10 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
         ເພີ່ມໃໝ່
       </button>
+    </div>
+    <div class="search-bar">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="ຄົ້ນຫາຊື່ສິນຄ້າ..." oninput="renderFilteredList()"/>
     </div>
     <div class="cat-filter">
       <div class="cf active" onclick="setCatFilter(this,'all')">ທັງໝົດ</div>
@@ -185,7 +217,7 @@
       </div>
       <div class="field">
         <label>ລາຄາ (ກີບ) *</label>
-        <input type="number" id="f_price" placeholder="ເຊັ່ນ: 65000000"/>
+        <input type="text" id="f_price" placeholder="ເຊັ່ນ: 65,000,000" inputmode="numeric" oninput="formatPriceInput(this)"/>
       </div>
       <div class="field">
         <label>ໝວດໝູ່</label>
@@ -217,7 +249,7 @@
 
       <div class="form-actions">
         <button class="btn-cancel-form" onclick="cancelForm()">ຍົກເລີກ</button>
-        <button class="btn-save" onclick="saveProduct()">💾 ບັນທຶກ</button>
+        <button class="btn-save" onclick="saveProduct()">ບັນທຶກ</button>
       </div>
     </div>
   </div>
@@ -226,13 +258,13 @@
   <!-- TAB: ANNOUNCE -->
   <div class="page" id="tabAnnounce">
     <div class="form-card" style="max-width:600px">
-      <h3>📢 ຂໍ້ຄວາມປະກາດ</h3>
+      <h3>ຂໍ້ຄວາມປະກາດ</h3>
       <div class="field">
         <label>ຂໍ້ຄວາມ</label>
         <textarea id="ann_msg" placeholder="ເຊັ່ນ: ສະບາຍດີທຸກຄົນ ຮ້ານເປີດທຸກວັນ..." style="height:90px"></textarea>
       </div>
       <div style="display:flex;gap:10px">
-        <button class="btn-save" style="flex:1" onclick="saveAnnounce()">💾 ບັນທຶກ / ອັບເດດ</button>
+        <button class="btn-save" style="flex:1" onclick="saveAnnounce()">ບັນທຶກ / ອັບເດດ</button>
         <button class="btn-cancel-form" onclick="clearAnnounce()">ລົບ / ປິດ</button>
       </div>
       <div id="ann_current" style="margin-top:16px;font-size:.78rem;color:rgba(255,255,255,0.4);line-height:1.7"></div>
@@ -242,7 +274,7 @@
   <!-- TAB: BANNER -->
   <div class="page" id="tabBanner">
     <div class="form-card" style="max-width:600px">
-      <h3>🖼️ ຈັດການແບນເນີ</h3>
+      <h3>ຈັດການແບນເນີ</h3>
       <div class="field">
         <label>URL ຮູບແບນເນີ</label>
         <div style="display:flex;gap:8px">
@@ -257,7 +289,7 @@
 
 <div class="overlay" id="delOverlay" onclick="closeDelOverlay(event)">
   <div class="confirm-box">
-    <h4>🗑️ ຢືນຢັນລົບ?</h4>
+    <h4>ຢືນຢັນລົບ?</h4>
     <p id="delMsg">ທ່ານຕ້ອງການລົບສິນຄ້ານີ້ ຈະ ບໍ່ສາມາດ ກູ້ຄືນໄດ້</p>
     <div class="confirm-btns">
       <button class="btn-no" onclick="closeDelOverlay()">ຍົກເລີກ</button>
@@ -306,6 +338,38 @@ async function doLogin(){
 
 document.getElementById('lp').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 document.getElementById('lu').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('lp').focus(); });
+
+// ── EYE TOGGLE ──
+function toggleEye(){
+  const inp = document.getElementById('lp');
+  const icon = document.getElementById('eyeIcon');
+  const show = inp.type === 'password';
+  inp.type = show ? 'text' : 'password';
+  icon.innerHTML = show
+    ? `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`
+    : `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+  document.getElementById('eyeBtn').style.color = show ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.25)';
+}
+
+// ── PRICE FORMAT ──
+function formatPriceInput(el){
+  let raw = el.value.replace(/[^0-9]/g,'');
+  if(!raw){ el.value=''; return; }
+  el.value = Number(raw).toLocaleString();
+}
+function getPriceValue(){
+  return parseInt(document.getElementById('f_price').value.replace(/[^0-9]/g,''))||0;
+}
+function setPriceValue(num){
+  document.getElementById('f_price').value = num ? Number(num).toLocaleString() : '';
+}
+
+// ── SEARCH FILTER ──
+function renderFilteredList(){
+  const q = (document.getElementById('searchInput').value||'').toLowerCase().trim();
+  const filtered = q ? products.filter(p => p.title && p.title.toLowerCase().includes(q)) : products;
+  renderGrid(filtered);
+}
 
 function doLogout(){ 
   sessionStorage.removeItem('ok'); 
@@ -386,7 +450,7 @@ function removeImgRow(btn){
 // ── SAVE ──
 async function saveProduct(){
   const name     = document.getElementById('f_name').value.trim();
-  const price    = parseInt(document.getElementById('f_price').value)||0;
+  const price    = getPriceValue();
   const cat      = document.getElementById('f_cat').value;
   const desc  = document.getElementById('f_desc').value.trim();
   const imgs  = [...document.querySelectorAll('#imgList input')].map(i=>i.value.trim()).filter(Boolean);
@@ -447,25 +511,33 @@ function setCatFilter(el, val){
 async function renderList(){
   const grid = document.getElementById('prodGrid');
   grid.innerHTML = `<div style="grid-column:1/-1;text-align:center"><div class="spinner"></div><div style="color:rgba(255,255,255,0.3);font-size:.8rem">ກຳລັງໂຫລດ...</div></div>`;
+  // clear search on fresh load
+  const si = document.getElementById('searchInput');
+  if(si) si.value = '';
 
   try {
     let url = '/rest/v1/products?select=*&order=created_at.desc';
     if(catFilter !== 'all') url += `&game=eq.${encodeURIComponent(catFilter)}`;
     products = await sbFetch(url);
-
     document.getElementById('totalCount').textContent = `(${products.length})`;
+    renderGrid(products);
+  } catch(e){
+    grid.innerHTML = `<div class="empty" style="color:#F85149">Error: ${e.message}</div>`;
+  }
+}
 
-    if(!products.length){
+function renderGrid(list){
+    const grid = document.getElementById('prodGrid');
+    if(!list.length){
       grid.innerHTML = `<div class="empty">ຍັງບໍ່ມີສິນຄ້າ — ກົດ "+ ເພີ່ມໃໝ່"</div>`;
       return;
     }
-
-    grid.innerHTML = products.map(p=>`
+    grid.innerHTML = list.map(p=>`
       <div class="prod-card">
         <div class="prod-img">
           ${p.imgs && p.imgs[0]
             ? `<img src="${p.imgs[0]}" alt="${p.title}" onerror="this.style.display='none'"/>`
-            : `<div class="no-img">🎮</div>`}
+            : `<div class="no-img" style="font-size:1.2rem;opacity:.15;display:flex;align-items:center;justify-content:center;height:100%;color:#fff">NO IMG</div>`}
           <div class="${p.status==='sold'?'sold-tag':'avail-tag'}">
             ${p.status==='sold'?'ຂາຍແລ້ວ':'ພ້ອມຂາຍ'}
           </div>
@@ -482,9 +554,6 @@ async function renderList(){
         </div>
       </div>
     `).join('');
-  } catch(e){
-    grid.innerHTML = `<div class="empty" style="color:#F85149">Error: ${e.message}</div>`;
-  }
 }
 
 // ── EDIT ──
@@ -496,7 +565,7 @@ async function editProduct(id){
     editId = id;
     document.getElementById('formTitle').textContent = 'ແກ້ໄຂສິນຄ້າ';
     document.getElementById('f_name').value     = p.title;
-    document.getElementById('f_price').value    = p.price;
+    setPriceValue(p.price);
     document.getElementById('f_cat').value      = p.game;
     document.getElementById('f_desc').value     = p.description||'';
 
