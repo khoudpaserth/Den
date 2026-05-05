@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="lo">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin · ເພີ່ມສິນຄ້າ</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Noto Sans Lao',sans-serif;background:#0B1628;color:#fff;min-height:100vh;}
+
+    .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+    .login-box{background:#13203A;border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:36px 28px;width:100%;max-width:360px;text-align:center;}
+    .login-box h2{font-size:1.2rem;font-weight:900;margin-bottom:6px}
+    .login-box p{font-size:.78rem;color:rgba(255,255,255,0.45);margin-bottom:24px}
+    .login-box input{width:100%;background:#0B1628;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:11px 14px;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.85rem;outline:none;margin-bottom:10px;transition:border-color .18s;}
+    .login-box input:focus{border-color:rgba(255,107,26,0.5)}
+    .login-box input::placeholder{color:rgba(255,255,255,0.25)}
+    .login-err{color:#F85149;font-size:.75rem;margin-bottom:8px;display:none}
+    .login-err.show{display:block}
+    .btn-orange{width:100%;padding:12px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.9rem;font-weight:900;box-shadow:0 3px 14px rgba(217,78,0,0.3);transition:transform .18s,box-shadow .18s;}
+    .btn-orange:hover{transform:translateY(-1px);box-shadow:0 5px 20px rgba(217,78,0,0.4)}
+
+    .app{display:none}
+    .app.show{display:block}
+
+    .header{background:#13203A;border-bottom:1px solid rgba(255,255,255,0.07);padding:0 18px;height:54px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+    .header-brand{font-size:.92rem;font-weight:900;color:#FF8C42}
+    .header-right{display:flex;align-items:center;gap:10px}
+    .btn-sm{padding:6px 14px;border-radius:7px;border:none;cursor:pointer;font-family:'Noto Sans Lao',sans-serif;font-size:.76rem;font-weight:700;transition:opacity .18s;}
+    .btn-view{background:rgba(88,166,255,0.15);color:#58A6FF}
+    .btn-logout{background:rgba(248,81,73,0.12);color:#F85149}
+
+    .tabs{display:flex;gap:0;background:#13203A;border-bottom:1px solid rgba(255,255,255,0.07);padding:0 18px;overflow-x:auto;scrollbar-width:none;}
+    .tabs::-webkit-scrollbar{display:none}
+    .tab{padding:12px 18px;font-size:.82rem;font-weight:700;color:rgba(255,255,255,0.45);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .18s;}
+    .tab.active{color:#FF8C42;border-bottom-color:#FF6B1A}
+
+    .page{display:none;padding:20px 18px}
+    .page.active{display:block}
+
+    /* FORM */
+    .form-card{background:#13203A;border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:20px;max-width:600px;}
+    .form-card h3{font-size:.95rem;font-weight:900;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+    .field{margin-bottom:14px}
+    .field label{display:block;font-size:.72rem;font-weight:700;color:rgba(255,255,255,0.45);letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px;}
+    .field input,.field select,.field textarea{width:100%;background:#0B1628;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 13px;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.85rem;outline:none;transition:border-color .18s;}
+    .field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(255,107,26,0.4)}
+    .field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.2)}
+    .field select option{background:#13203A}
+    .field textarea{resize:vertical;min-height:80px;line-height:1.6}
+
+    .img-url-list{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+    .img-url-row{display:flex;gap:8px;align-items:center}
+    .img-url-row input{flex:1}
+    .btn-rm{width:32px;height:32px;border-radius:7px;flex-shrink:0;background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.2);color:#F85149;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:background .18s;}
+    .btn-rm:hover{background:rgba(248,81,73,0.22)}
+    .btn-add-img{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.12);color:rgba(255,255,255,0.4);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .18s;}
+    .btn-add-img:hover{border-color:rgba(255,107,26,0.35);color:#FF8C42}
+
+    /* Extras (key-value) */
+    .extra-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+    .extra-row input{flex:1}
+
+    .form-actions{display:flex;gap:10px;margin-top:20px}
+    .btn-save{flex:1;padding:12px;border-radius:9px;border:none;cursor:pointer;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.88rem;font-weight:900;box-shadow:0 3px 12px rgba(217,78,0,0.3);transition:transform .18s,box-shadow .18s;}
+    .btn-save:hover{transform:translateY(-1px);box-shadow:0 5px 18px rgba(217,78,0,0.4)}
+    .btn-cancel-form{padding:12px 20px;border-radius:9px;border:none;cursor:pointer;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);font-family:'Noto Sans Lao',sans-serif;font-size:.85rem;font-weight:700;}
+
+    /* LIST */
+    .list-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap;}
+    .list-header h3{font-size:.95rem;font-weight:900}
+    .btn-add-new{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:none;cursor:pointer;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.8rem;font-weight:900;box-shadow:0 2px 10px rgba(217,78,0,0.3);transition:transform .18s;}
+    .btn-add-new:hover{transform:translateY(-1px)}
+
+    .cat-filter{display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap}
+    .cf{padding:5px 14px;border-radius:7px;font-size:.75rem;font-weight:700;background:#13203A;border:1px solid rgba(255,255,255,0.08);color:rgba(255,255,255,0.45);cursor:pointer;transition:all .18s;}
+    .cf.active{background:rgba(255,107,26,0.12);border-color:rgba(255,107,26,0.3);color:#FF8C42}
+
+    .prod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;}
+    .prod-card{background:#13203A;border:1px solid rgba(255,255,255,0.07);border-radius:10px;overflow:hidden;transition:border-color .18s;}
+    .prod-card:hover{border-color:rgba(255,107,26,0.25)}
+    .prod-img{width:100%;aspect-ratio:16/10;background:#0B1628;overflow:hidden;position:relative;}
+    .prod-img img{width:100%;height:100%;object-fit:cover}
+    .prod-img .no-img{width:100%;height:100%;display:flex;align-items:center;justify-content:center;opacity:.2;font-size:1.8rem;}
+    .sold-tag{position:absolute;top:6px;right:6px;background:rgba(190,49,49,0.88);color:#fff;font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:5px;}
+    .avail-tag{position:absolute;top:6px;right:6px;background:rgba(23,146,74,0.88);color:#fff;font-size:.62rem;font-weight:700;padding:3px 8px;border-radius:5px;}
+    .prod-body{padding:10px 11px 11px}
+    .prod-name{font-size:.82rem;font-weight:700;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .prod-cat{font-size:.65rem;color:rgba(255,255,255,0.35);margin-bottom:6px;}
+    .prod-price{font-size:.95rem;font-weight:900;color:#FF6B1A;margin-bottom:8px;}
+    .prod-actions{display:flex;gap:6px}
+    .pa-btn{flex:1;padding:5px;border-radius:6px;border:none;cursor:pointer;font-family:'Noto Sans Lao',sans-serif;font-size:.68rem;font-weight:700;transition:opacity .18s;}
+    .pa-edit{background:rgba(88,166,255,0.12);color:#58A6FF;border:1px solid rgba(88,166,255,0.2)}
+    .pa-toggle{background:rgba(240,160,0,0.1);color:#F0A000;border:1px solid rgba(240,160,0,0.2)}
+    .pa-del{background:rgba(248,81,73,0.08);color:#F85149;border:1px solid rgba(248,81,73,0.15)}
+    .pa-btn:hover{opacity:.75}
+
+    .empty{grid-column:1/-1;text-align:center;padding:48px 20px;color:rgba(255,255,255,0.2);font-size:.85rem;}
+
+    /* Loading */
+    .spinner{width:30px;height:30px;border:3px solid rgba(255,107,26,0.2);border-top-color:#FF6B1A;border-radius:50%;animation:spin .7s linear infinite;margin:40px auto 10px}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .toast{position:fixed;bottom:20px;right:20px;background:#13203A;border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:11px 16px;font-size:.8rem;font-weight:700;box-shadow:0 6px 24px rgba(0,0,0,0.4);transform:translateY(80px);opacity:0;transition:all .3s cubic-bezier(.3,1,.35,1);z-index:999;}
+    .toast.show{transform:translateY(0);opacity:1}
+    .toast.ok{border-left:3px solid #3FB950;color:#3FB950}
+    .toast.err{border-left:3px solid #F85149;color:#F85149}
+
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .2s;}
+    .overlay.open{opacity:1;pointer-events:all}
+    .confirm-box{background:#13203A;border:1px solid rgba(255,255,255,0.08);border-radius:14px;padding:28px 24px;text-align:center;width:100%;max-width:320px;}
+    .confirm-box h4{font-size:.95rem;margin-bottom:8px}
+    .confirm-box p{font-size:.78rem;color:rgba(255,255,255,0.45);margin-bottom:20px;line-height:1.6}
+    .confirm-btns{display:flex;gap:10px}
+    .confirm-btns button{flex:1;padding:10px;border-radius:8px;border:none;cursor:pointer;font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;font-weight:700;}
+    .btn-no{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.5)}
+    .btn-yes{background:#F85149;color:#fff}
+  </style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <h2>🔐 Admin</h2>
+    <p>ສະເພາະຜູ້ດູແລ</p>
+    <input type="text" id="lu" placeholder="Username" autocomplete="off"/>
+    <input type="password" id="lp" placeholder="Password" autocomplete="off"/>
+    <div class="login-err" id="lerr">Username ຫຼື Password ບໍ່ຖືກ</div>
+    <button class="btn-orange" onclick="doLogin()">ເຂົ້າລະບົບ</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appWrap">
+  <div class="header">
+    <div class="header-brand">⚙️ Admin Panel</div>
+    <div class="header-right">
+      <a href="index.html" target="_blank" class="btn-sm btn-view">ໜ້າຮ້ານ</a>
+      <button class="btn-sm btn-logout" onclick="doLogout()">ອອກ</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab(this,'tabList')">📦 ລາຍການ</div>
+    <div class="tab" id="tabAddBtn" onclick="openAddTab()">➕ ເພີ່ມສິນຄ້າ</div>
+    <div class="tab" onclick="switchTab(this,'tabBanner')">🖼️ ແບນເນີ</div>
+    <div class="tab" onclick="switchTab(this,'tabAnnounce')">📢 ປະກາດ</div>
+  </div>
+
+  <!-- TAB: LIST -->
+  <div class="page active" id="tabList">
+    <div class="list-header">
+      <h3>ສິນຄ້າທັງໝົດ <span id="totalCount" style="color:#FF8C42;font-size:.85rem"></span></h3>
+      <button class="btn-add-new" onclick="openAddTab()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        ເພີ່ມໃໝ່
+      </button>
+    </div>
+    <div class="cat-filter">
+      <div class="cf active" onclick="setCatFilter(this,'all')">ທັງໝົດ</div>
+      <div class="cf" onclick="setCatFilter(this,'Mobile Legends')">Mobile Legends</div>
+      <div class="cf" onclick="setCatFilter(this,'Free Fire')">Free Fire</div>
+    </div>
+    <div class="prod-grid" id="prodGrid">
+      <div style="grid-column:1/-1;text-align:center">
+        <div class="spinner"></div>
+        <div style="color:rgba(255,255,255,0.3);font-size:.8rem">ກຳລັງໂຫລດ...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ADD/EDIT -->
+  <div class="page" id="tabAdd">
+    <div class="form-card">
+      <h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        <span id="formTitle">ເພີ່ມສິນຄ້າໃໝ່</span>
+      </h3>
+
+      <div class="field">
+        <label>ຊື່ສິນຄ້າ *</label>
+        <input type="text" id="f_name" placeholder="ເຊັ່ນ: ທອບໂທຍ 850 Skin"/>
+      </div>
+      <div class="field">
+        <label>ລາຄາ (ກີບ) *</label>
+        <input type="number" id="f_price" placeholder="ເຊັ່ນ: 65000000"/>
+      </div>
+      <div class="field">
+        <label>ໝວດໝູ່</label>
+        <select id="f_cat">
+          <option value="Mobile Legends">Mobile Legends</option>
+          <option value="Free Fire">Free Fire</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>ຮູບພາບ (URL) — ເພີ່ມໄດ້ຫຼາຍຮູບ</label>
+        <div class="img-url-list" id="imgList">
+          <div class="img-url-row">
+            <input type="url" placeholder="https://... URL ຮູບ"/>
+            <button class="btn-rm" onclick="removeImgRow(this)">×</button>
+          </div>
+        </div>
+        <button class="btn-add-img" onclick="addImgRow()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          ເພີ່ມ URL ຮູບ
+        </button>
+      </div>
+
+
+      <div class="field">
+        <label>ລາຍລະອຽດ</label>
+        <textarea id="f_desc" placeholder="ລາຍລະອຽດສິນຄ້າ..."></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-cancel-form" onclick="cancelForm()">ຍົກເລີກ</button>
+        <button class="btn-save" onclick="saveProduct()">💾 ບັນທຶກ</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+  <!-- TAB: ANNOUNCE -->
+  <div class="page" id="tabAnnounce">
+    <div class="form-card" style="max-width:600px">
+      <h3>📢 ຂໍ້ຄວາມປະກາດ</h3>
+      <div class="field">
+        <label>ຂໍ້ຄວາມ</label>
+        <textarea id="ann_msg" placeholder="ເຊັ່ນ: ສະບາຍດີທຸກຄົນ ຮ້ານເປີດທຸກວັນ..." style="height:90px"></textarea>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn-save" style="flex:1" onclick="saveAnnounce()">💾 ບັນທຶກ / ອັບເດດ</button>
+        <button class="btn-cancel-form" onclick="clearAnnounce()">ລົບ / ປິດ</button>
+      </div>
+      <div id="ann_current" style="margin-top:16px;font-size:.78rem;color:rgba(255,255,255,0.4);line-height:1.7"></div>
+    </div>
+  </div>
+
+  <!-- TAB: BANNER -->
+  <div class="page" id="tabBanner">
+    <div class="form-card" style="max-width:600px">
+      <h3>🖼️ ຈັດການແບນເນີ</h3>
+      <div class="field">
+        <label>URL ຮູບແບນເນີ</label>
+        <div style="display:flex;gap:8px">
+          <input type="url" id="b_url" placeholder="https://...jpg"/>
+          <button class="btn-save" style="white-space:nowrap;padding:8px 14px" onclick="addBanner()">+ ເພີ່ມ</button>
+        </div>
+      </div>
+      <div id="bannerList" style="display:flex;flex-direction:column;gap:10px;margin-top:6px"></div>
+    </div>
+  </div>
+
+
+<div class="overlay" id="delOverlay" onclick="closeDelOverlay(event)">
+  <div class="confirm-box">
+    <h4>🗑️ ຢືນຢັນລົບ?</h4>
+    <p id="delMsg">ທ່ານຕ້ອງການລົບສິນຄ້ານີ້ ຈະ ບໍ່ສາມາດ ກູ້ຄືນໄດ້</p>
+    <div class="confirm-btns">
+      <button class="btn-no" onclick="closeDelOverlay()">ຍົກເລີກ</button>
+      <button class="btn-yes" onclick="confirmDel()">ລົບ</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ══ SUPABASE CONFIG ══
+const SB_URL = 'https://wsklbzywuzvsdhmmvhiy.supabase.co';
+const SB_KEY = 'sb_publishable_YpJBgsuYZoKgEIsz3lJp_w_1PpK7nrz';
+
+// ══ AUTH (เปลี่ยนเป็นเช็คจาก Supabase) ══
+async function doLogin(){
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value.trim();
+  
+  if(!u || !p){
+    document.getElementById('lerr').textContent = 'ກະລຸນາໃສ່ Username ແລະ Password';
+    document.getElementById('lerr').classList.add('show');
+    return;
+  }
+
+  try {
+    const data = await sbFetch(`/rest/v1/admins?username=eq.${encodeURIComponent(u)}&password=eq.${encodeURIComponent(p)}&select=id,username`);
+    if(data && data.length > 0){
+      sessionStorage.setItem('ok','1');
+      sessionStorage.setItem('admin_user', data[0].username);
+      document.getElementById('loginWrap').style.display='none';
+      document.getElementById('appWrap').classList.add('show');
+      document.getElementById('lerr').classList.remove('show');
+      renderList();
+    } else {
+      document.getElementById('lerr').textContent = 'Username ຫຼື Password ບໍ່ຖືກ';
+      document.getElementById('lerr').classList.add('show');
+    }
+  } catch(e){
+    console.error(e);
+    document.getElementById('lerr').textContent = 'ເກີດຂໍ້ຜິດພາດ ກະລຸນາລອງໃໝ່';
+    document.getElementById('lerr').classList.add('show');
+  }
+}
+
+document.getElementById('lp').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('lu').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('lp').focus(); });
+
+function doLogout(){ 
+  sessionStorage.removeItem('ok'); 
+  sessionStorage.removeItem('admin_user');
+  location.reload(); 
+}
+
+if(sessionStorage.getItem('ok')==='1'){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('appWrap').classList.add('show');
+}
+
+// ══ SUPABASE HELPERS ══
+async function sbFetch(path, opts={}){
+  const headers = {
+    'apikey': SB_KEY,
+    'Authorization': 'Bearer ' + SB_KEY,
+    'Content-Type': 'application/json',
+    ...opts.headers
+  };
+  const res = await fetch(SB_URL + path, { ...opts, headers });
+  if(!res.ok){
+    const err = await res.text();
+    throw new Error(err);
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+let products = [];
+let editId   = null;
+let delId    = null;
+let catFilter= 'all';
+
+// ── TABS ──
+function switchTab(el, pageId){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById(pageId).classList.add('active');
+  if(pageId==='tabList') renderList();
+  if(pageId==='tabBanner') loadBannerList();
+  if(pageId==='tabAnnounce') loadAnnounce();
+}
+
+function openAddTab(){
+  editId = null;
+  document.getElementById('formTitle').textContent = 'ເພີ່ມສິນຄ້າໃໝ່';
+  document.getElementById('f_name').value     = '';
+  document.getElementById('f_price').value    = '';
+  document.getElementById('f_cat').value      = 'Mobile Legends';
+  document.getElementById('f_desc').value     = '';
+  document.getElementById('imgList').innerHTML = `<div class="img-url-row"><input type="url" placeholder="https://... URL ຮູບ"/><button class="btn-rm" onclick="removeImgRow(this)">×</button></div>`;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tabAddBtn').classList.add('active');
+  document.getElementById('tabAdd').classList.add('active');
+}
+
+function cancelForm(){
+  document.querySelectorAll('.tab')[0].click();
+}
+
+// ── IMG ROWS ──
+function addImgRow(){
+  const row = document.createElement('div');
+  row.className='img-url-row';
+  row.innerHTML=`<input type="url" placeholder="https://... URL ຮູບ"/><button class="btn-rm" onclick="removeImgRow(this)">×</button>`;
+  document.getElementById('imgList').appendChild(row);
+}
+function removeImgRow(btn){
+  const list = document.getElementById('imgList');
+  if(list.children.length > 1) btn.parentElement.remove();
+}
+
+
+
+// ── SAVE ──
+async function saveProduct(){
+  const name     = document.getElementById('f_name').value.trim();
+  const price    = parseInt(document.getElementById('f_price').value)||0;
+  const cat      = document.getElementById('f_cat').value;
+  const desc  = document.getElementById('f_desc').value.trim();
+  const imgs  = [...document.querySelectorAll('#imgList input')].map(i=>i.value.trim()).filter(Boolean);
+
+  if(!name || !price){
+    showToast('ໃສ່ຊື່ ແລະ ລາຄາດ້ວຍ','err');
+    return;
+  }
+
+  // วันที่ปัจจุบันอัตโนมัติ (เฉพาะตอนเพิ่มใหม่)
+  const now = new Date();
+  const dateDisplay = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
+
+  const payload = {
+    title: name,
+    game: cat,
+    price,
+    status: 'avail',
+    imgs,
+    description: desc,
+    date: editId ? undefined : dateDisplay
+  };
+  if(editId) delete payload.date;
+
+  try {
+    if(editId !== null){
+      await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(editId)}`, {
+        method: 'PATCH',
+        headers: {'Prefer':'return=minimal'},
+        body: JSON.stringify(payload)
+      });
+      showToast('ອັບເດດສຳເລັດ ✓','ok');
+    } else {
+      await sbFetch('/rest/v1/products', {
+        method: 'POST',
+        headers: {'Prefer':'return=minimal'},
+        body: JSON.stringify(payload)
+      });
+      showToast('ເພີ່ມສຳເລັດ ✓','ok');
+    }
+    editId = null;
+    cancelForm();
+    setTimeout(()=>renderList(), 400);
+  } catch(e){
+    console.error(e);
+    showToast('Error: ' + e.message,'err');
+  }
+}
+
+// ── RENDER LIST ──
+function setCatFilter(el, val){
+  document.querySelectorAll('.cf').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  catFilter = val;
+  renderList();
+}
+
+async function renderList(){
+  const grid = document.getElementById('prodGrid');
+  grid.innerHTML = `<div style="grid-column:1/-1;text-align:center"><div class="spinner"></div><div style="color:rgba(255,255,255,0.3);font-size:.8rem">ກຳລັງໂຫລດ...</div></div>`;
+
+  try {
+    let url = '/rest/v1/products?select=*&order=created_at.desc';
+    if(catFilter !== 'all') url += `&game=eq.${encodeURIComponent(catFilter)}`;
+    products = await sbFetch(url);
+
+    document.getElementById('totalCount').textContent = `(${products.length})`;
+
+    if(!products.length){
+      grid.innerHTML = `<div class="empty">ຍັງບໍ່ມີສິນຄ້າ — ກົດ "+ ເພີ່ມໃໝ່"</div>`;
+      return;
+    }
+
+    grid.innerHTML = products.map(p=>`
+      <div class="prod-card">
+        <div class="prod-img">
+          ${p.imgs && p.imgs[0]
+            ? `<img src="${p.imgs[0]}" alt="${p.title}" onerror="this.style.display='none'"/>`
+            : `<div class="no-img">🎮</div>`}
+          <div class="${p.status==='sold'?'sold-tag':'avail-tag'}">
+            ${p.status==='sold'?'ຂາຍແລ້ວ':'ພ້ອມຂາຍ'}
+          </div>
+        </div>
+        <div class="prod-body">
+          <div class="prod-name">${p.title}</div>
+          <div class="prod-cat">${p.game}</div>
+          <div class="prod-price">${fmt(p.price)} ກີບ</div>
+          <div class="prod-actions">
+            <button class="pa-btn pa-edit" onclick="editProduct('${p.id}')">ແກ້ໄຂ</button>
+            <button class="pa-btn pa-toggle" onclick="toggleStatus('${p.id}','${p.status}')">${p.status==='sold'?'ເປີດ':'ປິດ'}</button>
+            <button class="pa-btn pa-del" onclick="openDel('${p.id}','${p.title.replace(/'/g,"\\'")}')">ລົບ</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e){
+    grid.innerHTML = `<div class="empty" style="color:#F85149">Error: ${e.message}</div>`;
+  }
+}
+
+// ── EDIT ──
+async function editProduct(id){
+  try {
+    const data = await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(id)}&select=*`);
+    const p = data[0];
+    if(!p) return;
+    editId = id;
+    document.getElementById('formTitle').textContent = 'ແກ້ໄຂສິນຄ້າ';
+    document.getElementById('f_name').value     = p.title;
+    document.getElementById('f_price').value    = p.price;
+    document.getElementById('f_cat').value      = p.game;
+    document.getElementById('f_desc').value     = p.description||'';
+
+    const imgs = (p.imgs && p.imgs.length) ? p.imgs : [''];
+    document.getElementById('imgList').innerHTML = imgs.map(url=>`
+      <div class="img-url-row">
+        <input type="url" placeholder="https://..." value="${url}"/>
+        <button class="btn-rm" onclick="removeImgRow(this)">×</button>
+      </div>`).join('');
+
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+    document.getElementById('tabAddBtn').classList.add('active');
+    document.getElementById('tabAdd').classList.add('active');
+  } catch(e){
+    showToast('Error: ' + e.message,'err');
+  }
+}
+
+// ── TOGGLE STATUS ──
+async function toggleStatus(id, currentStatus){
+  const newStatus = currentStatus==='avail' ? 'sold' : 'avail';
+  try {
+    await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(id)}`, {
+      method: 'PATCH',
+      headers: {'Prefer':'return=minimal'},
+      body: JSON.stringify({status: newStatus})
+    });
+    showToast(`ປ່ຽນເປັນ ${newStatus==='avail'?'ພ້ອມຂາຍ':'ຂາຍແລ້ວ'} ✓`,'ok');
+    renderList();
+  } catch(e){
+    showToast('Error: ' + e.message,'err');
+  }
+}
+
+// ── DELETE ──
+function openDel(id, name){
+  delId = id;
+  document.getElementById('delMsg').textContent = `ລົບ "${name}" — ຈະ ບໍ່ສາມາດ ກູ້ຄືນໄດ້`;
+  document.getElementById('delOverlay').classList.add('open');
+}
+async function confirmDel(){
+  try {
+    await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(delId)}`, { method:'DELETE', headers:{'Prefer':'return=minimal'} });
+    closeDelOverlay();
+    renderList();
+    showToast('ລົບສຳເລັດ','ok');
+    delId = null;
+  } catch(e){
+    showToast('Error: ' + e.message,'err');
+  }
+}
+function closeDelOverlay(e){
+  if(!e || e.target===document.getElementById('delOverlay'))
+    document.getElementById('delOverlay').classList.remove('open');
+}
+
+// ── TOAST ──
+let tt;
+function showToast(msg, type='ok'){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${type} show`;
+  clearTimeout(tt);
+  tt = setTimeout(()=>t.classList.remove('show'), 2800);
+}
+
+function fmt(n){ return Number(n).toLocaleString(); }
+
+// ── BANNER ──
+async function loadBannerList(){
+  try{
+    const data = await sbFetch('/rest/v1/banners?select=*&order=sort_order.asc');
+    const el = document.getElementById('bannerList');
+    const allImgs = [...(data||[])];
+    const fallback = 'https://img2.pic.in.th/7887.jpg';
+    if(!allImgs.length){
+      el.innerHTML=`
+        <div style="font-size:.72rem;color:rgba(255,255,255,0.35);margin-bottom:8px">* ຮູບ default (ໃຊ້ເມື່ອ DB ຫວ່າງ)</div>
+        <div style="display:flex;align-items:center;gap:10px;background:#0B1628;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 12px;opacity:.6">
+          <img src="${fallback}" style="width:72px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0"/>
+          <span style="flex:1;font-size:.72rem;color:rgba(255,255,255,0.4);word-break:break-all">${fallback}</span>
+          <span style="font-size:.68rem;color:rgba(255,255,255,0.3)">auto</span>
+        </div>`;
+      return;
+    }
+    el.innerHTML = allImgs.map(b=>`
+      <div style="display:flex;align-items:center;gap:10px;background:#0B1628;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:8px 12px">
+        <img src="${b.img_url}" style="width:72px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0"/>
+        <span style="flex:1;font-size:.75rem;color:rgba(255,255,255,0.5);word-break:break-all">${b.img_url}</span>
+        <button onclick="deleteBanner(${b.id})" style="background:rgba(248,81,73,0.15);color:#F85149;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:.75rem;font-weight:700">ລົບ</button>
+      </div>`).join('');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+}
+async function addBanner(){
+  const url = document.getElementById('b_url').value.trim();
+  if(!url){ showToast('ໃສ່ URL ດ້ວຍ','err'); return; }
+  try{
+    await sbFetch('/rest/v1/banners', { method:'POST', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({img_url: url, sort_order: Date.now()}) });
+    document.getElementById('b_url').value = '';
+    showToast('ເພີ່ມແບນເນີສຳເລັດ','ok');
+    loadBannerList();
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+}
+async function deleteBanner(id){
+  try{
+    await sbFetch(`/rest/v1/banners?id=eq.${id}`, { method:'DELETE' });
+    showToast('ລົບແລ້ວ','ok');
+    loadBannerList();
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+}
+
+// ── ANNOUNCEMENT ──
+async function loadAnnounce(){
+  try{
+    const data = await sbFetch('/rest/v1/announcements?select=*&order=created_at.desc&limit=1');
+    const el = document.getElementById('ann_current');
+    if(data && data.length){
+      document.getElementById('ann_msg').value = data[0].message;
+      el.innerHTML = `ປະກາດປັດຈຸບັນ: <span style="color:#FF8C42">${data[0].message}</span><br>ສະຖານະ: ${data[0].is_active ? '🟢 ເປີດໃຊ້' : '🔴 ປິດ'}`;
+    } else {
+      el.textContent = 'ຍັງບໍ່ມີປະກາດ';
+    }
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+}
+async function saveAnnounce(){
+  const msg = document.getElementById('ann_msg').value.trim();
+  if(!msg){ showToast('ໃສ່ຂໍ້ຄວາມດ້ວຍ','err'); return; }
+  try{
+    await sbFetch('/rest/v1/announcements?is_active=eq.true', { method:'DELETE', headers:{'Prefer':'return=minimal'} });
+    await sbFetch('/rest/v1/announcements', { method:'POST', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({message: msg, is_active: true}) });
+    showToast('ບັນທຶກປະກາດສຳເລັດ ✓','ok');
+    loadAnnounce();
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+}
+async function clearAnnounce(){
+  try{
+    await sbFetch('/rest/v1/announcements?is_active=eq.true', { method:'DELETE', headers:{'Prefer':'return=minimal'} });
+    document.getElementById('ann_msg').value = '';
+    document.getElementById('ann_current').textContent = 'ຍັງບໍ່ມີປະກາດ';
+    showToast('ລົບປະກາດແລ້ວ','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+}
+
+// INIT
+if(sessionStorage.getItem('ok')==='1') renderList();
+</script>
+</body>
+</html>
