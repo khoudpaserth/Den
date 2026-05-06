@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Admin · ເພີ່ມສິນຄ້າ</title>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;600;700;900&family=Noto+Serif+Lao:wght@700;900&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     body{font-family:'Noto Sans Lao',sans-serif;background:#0B1628;color:#fff;min-height:100vh;}
@@ -991,7 +991,10 @@ async function saveFont(){
 function highlightFontOption(val){
   ['noto_sans','noto_serif','phetsarath','souliyo'].forEach((f,i)=>{
     const el = document.getElementById(`fontOpt${i+1}`);
-    if(el) el.style.borderColor = f===val ? '#FF6B1A' : 'rgba(255,255,255,0.1)';
+    if(el){
+      el.style.borderColor = f===val ? '#FF6B1A' : 'rgba(255,255,255,0.1)';
+      el.style.background = f===val ? 'rgba(255,107,26,0.07)' : 'rgba(255,255,255,0.03)';
+    }
   });
   const radio = document.querySelector(`input[name="fontChoice"][value="${val}"]`);
   if(radio) radio.checked = true;
