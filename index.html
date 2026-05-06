@@ -625,7 +625,9 @@ async function saveProduct(){
   if(isDup){
     showToast(`ຊື່ "${name}" ມີຢູ່ໃນ ${cat} ແລ້ວ — ກະລຸນາໃຊ້ຊື່ອື່ນ`, 'err');
     return;
-  } (เฉพาะตอนเพิ่มใหม่)
+  }
+
+  // วันที่ปัจจุบันอัตโนมัติ (เฉพาะตอนเพิ่มใหม่)
   const now = new Date();
   const dateDisplay = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
 
@@ -1091,6 +1093,7 @@ function updateDetailThemeButtons(val){
 }
 
 
+async function setTheme(val){
   showLoading('ກຳລັງອັບເດດ Theme...');
   try{
     await upsertWebConfig({theme: val});
