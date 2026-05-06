@@ -376,6 +376,23 @@
         <div id="sortColorStatus" style="margin-top:8px;font-size:.73rem;color:rgba(255,255,255,0.35)">ກຳລັງໂຫລດ...</div>
       </div>
 
+      <!-- Detail page theme -->
+      <div style="margin-bottom:22px;border:1.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:16px 14px;background:rgba(255,255,255,0.02)">
+        <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          🎨 ປັບສີຣາຍລະອຽດສິນຄ້າ
+        </div>
+        <div style="font-size:.72rem;color:rgba(255,255,255,0.35);margin-bottom:10px">ໜ້າລາຍລະອຽດ (ກົດເຂົ້າສິນຄ້າ) — ສີຕ້ອງຕັດກັນ ຕົວໜັງສືຈາກດຳ↔ຂາວ, ສ້ມ-ຂຽວຄົງເດີມ</div>
+        <div style="display:flex;gap:10px">
+          <button id="btnDetailLight" onclick="setDetailTheme('light')" style="flex:1;padding:14px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.12);background:#F4F6FB;color:#1a1a2e;font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px">
+            ☀️ ສະຫວ່າງ
+          </button>
+          <button id="btnDetailDark" onclick="setDetailTheme('dark')" style="flex:1;padding:14px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.12);background:#0B1628;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px">
+            🌙 ມືດ
+          </button>
+        </div>
+        <div id="detailThemeStatus" style="margin-top:8px;font-size:.73rem;color:rgba(255,255,255,0.35)">ກຳລັງໂຫລດ...</div>
+      </div>
+
       <!-- Font selector -->
       <div style="margin-bottom:10px;border:1.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:16px 14px;background:rgba(255,255,255,0.02)">
         <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px">
@@ -602,7 +619,13 @@ async function saveProduct(){
     return;
   }
 
-  // วันที่ปัจจุบันอัตโนมัติ (เฉพาะตอนเพิ่มใหม่)
+  // ── ກວດຊື່ຊ້ຳໃນໝວດໝູ່ດຽວກັນ (ອະນຸຍາດຕ່າງໝວດ) ──
+  const dupCheck = await sbFetch(`/rest/v1/products?title=eq.${encodeURIComponent(name)}&game=eq.${encodeURIComponent(cat)}&select=id`);
+  const isDup = dupCheck && dupCheck.some(r => r.id !== editId);
+  if(isDup){
+    showToast(`ຊື່ "${name}" ມີຢູ່ໃນ ${cat} ແລ້ວ — ກະລຸນາໃຊ້ຊື່ອື່ນ`, 'err');
+    return;
+  } (เฉพาะตอนเพิ่มใหม่)
   const now = new Date();
   const dateDisplay = `${String(now.getDate()).padStart(2,'0')}/${String(now.getMonth()+1).padStart(2,'0')}/${now.getFullYear()}`;
 
@@ -929,11 +952,18 @@ async function loadWebConfig(){
       highlightFontOption(font);
       const fontLabels = {noto_sans:'Noto Sans Lao',noto_serif:'Noto Serif Lao',phetsarath:'Phetsarath OT',souliyo:'Souliyo Unicode'};
       document.getElementById('fontStatus').textContent = `ປັດຈຸບັນ: ${fontLabels[font]||font}`;
+
+      // Load detail theme
+      const dTheme = cfg.detail_theme || 'light';
+      updateDetailThemeButtons(dTheme);
+      document.getElementById('detailThemeStatus').textContent = `ປັດຈຸບັນ: ${dTheme==='dark'?'🌙 ມືດ':'☀️ ສະຫວ່າງ'}`;
     } else {
       renderColorPresets('cardColorPresets','pickCardColor','#ffffff');
       renderColorPresets('sortColorPresets','pickSortColor','#ffffff');
       highlightFontOption('noto_sans');
       document.getElementById('fontStatus').textContent = 'ປັດຈຸບັນ: Noto Sans Lao';
+      updateDetailThemeButtons('light');
+      document.getElementById('detailThemeStatus').textContent = 'ປັດຈຸບັນ: ☀️ ສະຫວ່າງ';
     }
   }catch(e){
     renderColorPresets('cardColorPresets','pickCardColor','#ffffff');
@@ -1043,7 +1073,24 @@ function updateLayoutButtons(val){
   if(c2) c2.style.outline = val==='2col' ? '2.5px solid #FF6B1A' : 'none';
 }
 
-async function setTheme(val){
+async function setDetailTheme(val){
+  showLoading('ກຳລັງອັບເດດ...');
+  try{
+    await upsertWebConfig({detail_theme: val});
+    updateDetailThemeButtons(val);
+    document.getElementById('detailThemeStatus').textContent = `ປັດຈຸບັນ: ${val==='dark'?'🌙 ມືດ':'☀️ ສະຫວ່າງ'}`;
+    showToast('ອັບເດດສີຣາຍລະອຽດສຳເລັດ ✓','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+function updateDetailThemeButtons(val){
+  const light = document.getElementById('btnDetailLight');
+  const dark  = document.getElementById('btnDetailDark');
+  if(light) light.style.outline = val==='light' ? '2.5px solid #FF6B1A' : 'none';
+  if(dark)  dark.style.outline  = val==='dark'  ? '2.5px solid #FF6B1A' : 'none';
+}
+
+
   showLoading('ກຳລັງອັບເດດ Theme...');
   try{
     await upsertWebConfig({theme: val});
