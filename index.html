@@ -165,7 +165,7 @@
   <div class="header">
     <div class="header-brand">Admin Panel</div>
     <div class="header-right">
-      <a href="index.html" target="_blank" class="btn-sm btn-view">ໜ້າຮ້ານ</a>
+      <a href="https://www.denthai.xyz" target="_blank" class="btn-sm btn-view">ໜ້າຮ້ານ</a>
       <button class="btn-sm btn-logout" onclick="doLogout()">ອອກ</button>
     </div>
   </div>
@@ -175,6 +175,7 @@
     <div class="tab" id="tabAddBtn" onclick="openAddTab()">ເພີ່ມສິນຄ້າ</div>
     <div class="tab" onclick="switchTab(this,'tabBanner')">ແບນເນີ</div>
     <div class="tab" onclick="switchTab(this,'tabAnnounce')">ປະກາດ</div>
+    <div class="tab" onclick="switchTab(this,'tabWebManage')">ຈັດການເວັບ</div>
   </div>
 
   <!-- TAB: LIST -->
@@ -286,6 +287,146 @@
     </div>
   </div>
 
+
+  <!-- TAB: WEB MANAGE -->
+  <div class="page" id="tabWebManage">
+    <div class="form-card" style="max-width:600px">
+      <h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 004.93 19.07M4.93 4.93A10 10 0 0119.07 19.07"/></svg>
+        ຈັດການໜ້າເວັບ
+      </h3>
+
+      <!-- Theme -->
+      <div style="margin-bottom:22px;border:1.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:16px 14px;background:rgba(255,255,255,0.02)">
+        <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          ໂໝດສີ (Theme)
+        </div>
+        <div style="display:flex;gap:10px">
+          <button id="btnDark" onclick="setTheme('dark')" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.12);background:#0B1628;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px">
+            🌙 Dark
+          </button>
+          <button id="btnLight" onclick="setTheme('light')" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.12);background:#F4F6FB;color:#1a1a2e;font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .18s;display:flex;align-items:center;justify-content:center;gap:6px">
+            ☀️ Light
+          </button>
+        </div>
+        <div id="themeStatus" style="margin-top:8px;font-size:.73rem;color:rgba(255,255,255,0.35)">ກຳລັງໂຫລດ...</div>
+      </div>
+
+      <!-- Category layout -->
+      <div style="margin-bottom:22px;border:1.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:16px 14px;background:rgba(255,255,255,0.02)">
+        <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Layout ໝວດໝູ່ (ໜ້າຮ້ານ)
+        </div>
+        <div style="display:flex;gap:10px">
+          <button id="btnCol1" onclick="setCatLayout('1col')" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .18s">
+            <div style="display:flex;flex-direction:column;gap:4px;margin-bottom:6px">
+              <div style="height:8px;background:rgba(255,107,26,0.4);border-radius:3px;width:100%"></div>
+              <div style="height:8px;background:rgba(255,107,26,0.4);border-radius:3px;width:100%"></div>
+            </div>
+            1 ຄໍລໍາ
+          </button>
+          <button id="btnCol2" onclick="setCatLayout('2col')" style="flex:1;padding:12px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .18s">
+            <div style="display:flex;gap:4px;margin-bottom:6px">
+              <div style="height:18px;background:rgba(255,107,26,0.4);border-radius:3px;flex:1"></div>
+              <div style="height:18px;background:rgba(255,107,26,0.4);border-radius:3px;flex:1"></div>
+            </div>
+            2 ຄໍລໍາ
+          </button>
+        </div>
+        <div id="catLayoutStatus" style="margin-top:8px;font-size:.73rem;color:rgba(255,255,255,0.35)">ກຳລັງໂຫລດ...</div>
+      </div>
+
+      <!-- Card background color -->
+      <div style="margin-bottom:22px;border:1.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:16px 14px;background:rgba(255,255,255,0.02)">
+        <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          🎨 ສີພື້ນຫລັງ ກາດສິນຄ້າ
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px" id="cardColorPresets">
+          <!-- preset swatches rendered by JS -->
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <label style="font-size:.75rem;color:rgba(255,255,255,0.5);flex-shrink:0">ເລືອກສີເອງ:</label>
+          <input type="color" id="cardColorPicker" value="#ffffff"
+            style="width:44px;height:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:none;cursor:pointer;padding:2px"
+            onchange="previewCardColor(this.value)"/>
+          <button onclick="saveCardColor()" style="flex:1;padding:8px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">ບັນທຶກ</button>
+          <button onclick="resetCardColor()" style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);font-family:'Noto Sans Lao',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">Reset</button>
+        </div>
+        <div id="cardColorStatus" style="margin-top:8px;font-size:.73rem;color:rgba(255,255,255,0.35)">ກຳລັງໂຫລດ...</div>
+      </div>
+
+      <!-- Sort box background color -->
+      <div style="margin-bottom:10px;border:1.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:16px 14px;background:rgba(255,255,255,0.02)">
+        <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px">
+          🗂️ ສີພື້ນຫລັງ ກ່ອງຈັດຮຽງ
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px" id="sortColorPresets">
+          <!-- preset swatches rendered by JS -->
+        </div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <label style="font-size:.75rem;color:rgba(255,255,255,0.5);flex-shrink:0">ເລືອກສີເອງ:</label>
+          <input type="color" id="sortColorPicker" value="#ffffff"
+            style="width:44px;height:36px;border-radius:8px;border:1.5px solid rgba(255,255,255,0.15);background:none;cursor:pointer;padding:2px"
+            onchange="previewSortColor(this.value)"/>
+          <button onclick="saveSortColor()" style="flex:1;padding:8px 12px;border-radius:8px;border:none;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">ບັນທຶກ</button>
+          <button onclick="resetSortColor()" style="padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.5);font-family:'Noto Sans Lao',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">Reset</button>
+        </div>
+        <div id="sortColorStatus" style="margin-top:8px;font-size:.73rem;color:rgba(255,255,255,0.35)">ກຳລັງໂຫລດ...</div>
+      </div>
+
+      <!-- Font selector -->
+      <div style="margin-bottom:10px;border:1.5px solid rgba(255,255,255,0.09);border-radius:12px;padding:16px 14px;background:rgba(255,255,255,0.02)">
+        <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:6px">
+          🔤 ເລືອກ Font ໜ້າຮ້ານ
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px" id="fontOptions">
+          <label id="fontOpt1" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);cursor:pointer;transition:border-color .18s">
+            <input type="radio" name="fontChoice" value="noto_sans" style="accent-color:#FF6B1A;width:15px;height:15px"/>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:#fff;font-family:'Noto Sans Lao',sans-serif">Noto Sans Lao</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,0.4);margin-top:2px">📌 ທາງການ · ອ່ານງ່າຍ · ແນະນຳ</div>
+            </div>
+          </label>
+          <label id="fontOpt2" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);cursor:pointer;transition:border-color .18s">
+            <input type="radio" name="fontChoice" value="noto_serif" style="accent-color:#FF6B1A;width:15px;height:15px"/>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:#fff;font-family:'Noto Serif Lao',serif">Noto Serif Lao</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,0.4);margin-top:2px">📖 Serif · ສວຍງາມ · ຄລາສສິກ</div>
+            </div>
+          </label>
+          <label id="fontOpt3" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);cursor:pointer;transition:border-color .18s">
+            <input type="radio" name="fontChoice" value="phetsarath" style="accent-color:#FF6B1A;width:15px;height:15px"/>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:#fff">Phetsarath OT</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,0.4);margin-top:2px">🇱🇦 ພາສາລາວ · ທາງການລາວ · ໝັ້ນຄົງ</div>
+            </div>
+          </label>
+          <label id="fontOpt4" style="display:flex;align-items:center;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);cursor:pointer;transition:border-color .18s">
+            <input type="radio" name="fontChoice" value="souliyo" style="accent-color:#FF6B1A;width:15px;height:15px"/>
+            <div>
+              <div style="font-size:.85rem;font-weight:700;color:#fff">Souliyo Unicode</div>
+              <div style="font-size:.7rem;color:rgba(255,255,255,0.4);margin-top:2px">✨ ທັນສະໄໝ · ໂຄ້ງມົນ · ນ່າລັກ</div>
+            </div>
+          </label>
+        </div>
+        <button onclick="saveFont()" style="width:100%;margin-top:12px;padding:11px;border-radius:9px;border:none;background:linear-gradient(135deg,#FF6B1A,#D94E00);color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.85rem;font-weight:900;cursor:pointer;box-shadow:0 3px 12px rgba(217,78,0,0.3);transition:transform .15s">
+          ບັນທຶກ Font
+        </button>
+        <div id="fontStatus" style="margin-top:8px;font-size:.73rem;color:rgba(255,255,255,0.35)">ກຳລັງໂຫລດ...</div>
+      </div>
+
+    </div>
+  </div>
+
+<!-- LOADING / PROCESSING POPUP -->
+<div id="loadingOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.65);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s">
+  <div style="background:#13203A;border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px 32px;text-align:center;min-width:200px">
+    <div style="width:38px;height:38px;border:4px solid rgba(255,107,26,0.2);border-top-color:#FF6B1A;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 14px"></div>
+    <div id="loadingMsg" style="font-size:.88rem;font-weight:700;color:#FF8C42">ກຳລັງບັນທຶກ...</div>
+  </div>
+</div>
 
 <div class="overlay" id="delOverlay" onclick="closeDelOverlay(event)">
   <div class="confirm-box">
@@ -413,6 +554,7 @@ function switchTab(el, pageId){
   if(pageId==='tabList') renderList();
   if(pageId==='tabBanner') loadBannerList();
   if(pageId==='tabAnnounce') loadAnnounce();
+  if(pageId==='tabWebManage') loadWebConfig();
 }
 
 function openAddTab(){
@@ -477,6 +619,7 @@ async function saveProduct(){
 
   try {
     if(editId !== null){
+      showLoading('ກຳລັງອັບເດດສິນຄ້າ...');
       await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(editId)}`, {
         method: 'PATCH',
         headers: {'Prefer':'return=minimal'},
@@ -484,6 +627,7 @@ async function saveProduct(){
       });
       showToast('ອັບເດດສຳເລັດ ✓','ok');
     } else {
+      showLoading('ກຳລັງເພີ່ມສິນຄ້າ...');
       await sbFetch('/rest/v1/products', {
         method: 'POST',
         headers: {'Prefer':'return=minimal'},
@@ -492,10 +636,12 @@ async function saveProduct(){
       showToast('ເພີ່ມສຳເລັດ ✓','ok');
     }
     editId = null;
+    hideLoading();
     cancelForm();
     setTimeout(()=>renderList(), 400);
   } catch(e){
     console.error(e);
+    hideLoading();
     showToast('Error: ' + e.message,'err');
   }
 }
@@ -589,14 +735,17 @@ async function editProduct(id){
 async function toggleStatus(id, currentStatus){
   const newStatus = currentStatus==='avail' ? 'sold' : 'avail';
   try {
+    showLoading(`ກຳລັງປ່ຽນສະຖານະ...`);
     await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(id)}`, {
       method: 'PATCH',
       headers: {'Prefer':'return=minimal'},
       body: JSON.stringify({status: newStatus})
     });
+    hideLoading();
     showToast(`ປ່ຽນເປັນ ${newStatus==='avail'?'ພ້ອມຂາຍ':'ຂາຍແລ້ວ'} ✓`,'ok');
     renderList();
   } catch(e){
+    hideLoading();
     showToast('Error: ' + e.message,'err');
   }
 }
@@ -609,12 +758,15 @@ function openDel(id, name){
 }
 async function confirmDel(){
   try {
+    showLoading('ກຳລັງລົບສິນຄ້າ...');
     await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(delId)}`, { method:'DELETE', headers:{'Prefer':'return=minimal'} });
     closeDelOverlay();
+    hideLoading();
     renderList();
     showToast('ລົບສຳເລັດ','ok');
     delId = null;
   } catch(e){
+    hideLoading();
     showToast('Error: ' + e.message,'err');
   }
 }
@@ -664,18 +816,22 @@ async function addBanner(){
   const url = document.getElementById('b_url').value.trim();
   if(!url){ showToast('ໃສ່ URL ດ້ວຍ','err'); return; }
   try{
+    showLoading('ກຳລັງເພີ່ມແບນເນີ...');
     await sbFetch('/rest/v1/banners', { method:'POST', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({img_url: url, sort_order: Date.now()}) });
     document.getElementById('b_url').value = '';
+    hideLoading();
     showToast('ເພີ່ມແບນເນີສຳເລັດ','ok');
     loadBannerList();
-  }catch(e){ showToast('Error: '+e.message,'err'); }
+  }catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
 }
 async function deleteBanner(id){
   try{
+    showLoading('ກຳລັງລົບແບນເນີ...');
     await sbFetch(`/rest/v1/banners?id=eq.${id}`, { method:'DELETE' });
+    hideLoading();
     showToast('ລົບແລ້ວ','ok');
     loadBannerList();
-  }catch(e){ showToast('Error: '+e.message,'err'); }
+  }catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
 }
 
 // ── ANNOUNCEMENT ──
@@ -695,19 +851,234 @@ async function saveAnnounce(){
   const msg = document.getElementById('ann_msg').value.trim();
   if(!msg){ showToast('ໃສ່ຂໍ້ຄວາມດ້ວຍ','err'); return; }
   try{
+    showLoading('ກຳລັງບັນທຶກປະກາດ...');
     await sbFetch('/rest/v1/announcements?is_active=eq.true', { method:'DELETE', headers:{'Prefer':'return=minimal'} });
     await sbFetch('/rest/v1/announcements', { method:'POST', headers:{'Prefer':'return=minimal'}, body: JSON.stringify({message: msg, is_active: true}) });
+    hideLoading();
     showToast('ບັນທຶກປະກາດສຳເລັດ ✓','ok');
     loadAnnounce();
-  }catch(e){ showToast('Error: '+e.message,'err'); }
+  }catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
 }
 async function clearAnnounce(){
   try{
+    showLoading('ກຳລັງລົບປະກາດ...');
     await sbFetch('/rest/v1/announcements?is_active=eq.true', { method:'DELETE', headers:{'Prefer':'return=minimal'} });
     document.getElementById('ann_msg').value = '';
     document.getElementById('ann_current').textContent = 'ຍັງບໍ່ມີປະກາດ';
+    hideLoading();
     showToast('ລົບປະກາດແລ້ວ','ok');
+  }catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
+}
+
+// ── LOADING POPUP ──
+function showLoading(msg='ກຳລັງບັນທຶກ...'){
+  document.getElementById('loadingMsg').textContent = msg;
+  const el = document.getElementById('loadingOverlay');
+  el.style.opacity = '1';
+  el.style.pointerEvents = 'all';
+}
+function hideLoading(){
+  const el = document.getElementById('loadingOverlay');
+  el.style.opacity = '0';
+  el.style.pointerEvents = 'none';
+}
+
+// ── WEB MANAGE ──
+const COLOR_PRESETS = [
+  {label:'ຂາວ',val:'#ffffff'},
+  {label:'ຊ້ຳ',val:'#162444'},
+  {label:'ໜ້ຳຕານ',val:'#1e1a14'},
+  {label:'ຂຽວ',val:'#0f2318'},
+  {label:'ມ່ວງ',val:'#1a1030'},
+  {label:'ສົ້ມ',val:'#fff3ec'},
+  {label:'ຟ້າ',val:'#e8f4fb'},
+  {label:'ຊ້ຳ2',val:'#13203A'},
+];
+
+function renderColorPresets(containerId, onClickFn, currentVal){
+  const c = document.getElementById(containerId);
+  if(!c) return;
+  c.innerHTML = COLOR_PRESETS.map(p=>`
+    <div onclick="${onClickFn}('${p.val}')"
+      title="${p.label}"
+      style="width:32px;height:32px;border-radius:8px;background:${p.val};cursor:pointer;border:2.5px solid ${currentVal===p.val?'#FF6B1A':'rgba(255,255,255,0.18)'};transition:border-color .15s;flex-shrink:0"
+    ></div>`).join('');
+}
+
+async function loadWebConfig(){
+  try{
+    const data = await sbFetch('/rest/v1/web_config?select=*&limit=1');
+    if(data && data.length){
+      const cfg = data[0];
+      updateThemeButtons(cfg.theme || 'dark');
+      updateLayoutButtons(cfg.cat_layout || '1col');
+      document.getElementById('themeStatus').textContent = `ປັດຈຸບັນ: ${cfg.theme==='light'?'☀️ Light':'🌙 Dark'}`;
+      document.getElementById('catLayoutStatus').textContent = `ປັດຈຸບັນ: ${cfg.cat_layout==='2col'?'2 ຄໍລໍາ':'1 ຄໍລໍາ'}`;
+
+      const cardCol = cfg.card_bg || '#ffffff';
+      const sortCol = cfg.sort_bg || '#ffffff';
+      document.getElementById('cardColorPicker').value = cardCol;
+      document.getElementById('sortColorPicker').value = sortCol;
+      document.getElementById('cardColorStatus').textContent = `ປັດຈຸບັນ: ${cardCol}`;
+      document.getElementById('sortColorStatus').textContent = `ປັດຈຸບັນ: ${sortCol}`;
+      renderColorPresets('cardColorPresets','pickCardColor', cardCol);
+      renderColorPresets('sortColorPresets','pickSortColor', sortCol);
+
+      // Load font
+      const font = cfg.font || 'noto_sans';
+      highlightFontOption(font);
+      const fontLabels = {noto_sans:'Noto Sans Lao',noto_serif:'Noto Serif Lao',phetsarath:'Phetsarath OT',souliyo:'Souliyo Unicode'};
+      document.getElementById('fontStatus').textContent = `ປັດຈຸບັນ: ${fontLabels[font]||font}`;
+    } else {
+      renderColorPresets('cardColorPresets','pickCardColor','#ffffff');
+      renderColorPresets('sortColorPresets','pickSortColor','#ffffff');
+      highlightFontOption('noto_sans');
+      document.getElementById('fontStatus').textContent = 'ປັດຈຸບັນ: Noto Sans Lao';
+    }
+  }catch(e){
+    renderColorPresets('cardColorPresets','pickCardColor','#ffffff');
+    renderColorPresets('sortColorPresets','pickSortColor','#ffffff');
+    highlightFontOption('noto_sans');
+  }
+}
+
+async function saveFont(){
+  const sel = document.querySelector('input[name="fontChoice"]:checked');
+  if(!sel){ showToast('ກະລຸນາເລືອກ Font','err'); return; }
+  const val = sel.value;
+  showLoading('ກຳລັງບັນທຶກ Font...');
+  try{
+    await upsertWebConfig({font: val});
+    document.getElementById('fontStatus').textContent = `ປັດຈຸບັນ: ${val}`;
+    highlightFontOption(val);
+    showToast('ບັນທຶກ Font ສຳເລັດ ✓','ok');
   }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+
+function highlightFontOption(val){
+  ['noto_sans','noto_serif','phetsarath','souliyo'].forEach((f,i)=>{
+    const el = document.getElementById(`fontOpt${i+1}`);
+    if(el) el.style.borderColor = f===val ? '#FF6B1A' : 'rgba(255,255,255,0.1)';
+  });
+  const radio = document.querySelector(`input[name="fontChoice"][value="${val}"]`);
+  if(radio) radio.checked = true;
+}
+
+// ── SQL ສຳລັບ Supabase (ເພີ່ມ column font ໃນ web_config) ──
+/*
+  ALTER TABLE web_config ADD COLUMN IF NOT EXISTS font TEXT DEFAULT 'noto_sans';
+*/
+
+// card color
+function pickCardColor(val){
+  document.getElementById('cardColorPicker').value = val;
+  previewCardColor(val);
+}
+function previewCardColor(val){
+  renderColorPresets('cardColorPresets','pickCardColor', val);
+}
+async function saveCardColor(){
+  const val = document.getElementById('cardColorPicker').value;
+  showLoading('ກຳລັງບັນທຶກສີກາດ...');
+  try{
+    await upsertWebConfig({card_bg: val});
+    document.getElementById('cardColorStatus').textContent = `ປັດຈຸບັນ: ${val}`;
+    showToast('ບັນທຶກສີກາດສຳເລັດ ✓','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+async function resetCardColor(){
+  document.getElementById('cardColorPicker').value = '#ffffff';
+  previewCardColor('#ffffff');
+  showLoading('ກຳລັງ Reset...');
+  try{
+    await upsertWebConfig({card_bg:'#ffffff'});
+    document.getElementById('cardColorStatus').textContent = `ປັດຈຸບັນ: #ffffff`;
+    showToast('Reset ສຳເລັດ','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+
+// sort color
+function pickSortColor(val){
+  document.getElementById('sortColorPicker').value = val;
+  previewSortColor(val);
+}
+function previewSortColor(val){
+  renderColorPresets('sortColorPresets','pickSortColor', val);
+}
+async function saveSortColor(){
+  const val = document.getElementById('sortColorPicker').value;
+  showLoading('ກຳລັງບັນທຶກສີກ່ອງຈັດຮຽງ...');
+  try{
+    await upsertWebConfig({sort_bg: val});
+    document.getElementById('sortColorStatus').textContent = `ປັດຈຸບັນ: ${val}`;
+    showToast('ບັນທຶກສີກ່ອງຈັດຮຽງສຳເລັດ ✓','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+async function resetSortColor(){
+  document.getElementById('sortColorPicker').value = '#ffffff';
+  previewSortColor('#ffffff');
+  showLoading('ກຳລັງ Reset...');
+  try{
+    await upsertWebConfig({sort_bg:'#ffffff'});
+    document.getElementById('sortColorStatus').textContent = `ປັດຈຸບັນ: #ffffff`;
+    showToast('Reset ສຳເລັດ','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+
+function updateThemeButtons(val){
+  const dark = document.getElementById('btnDark');
+  const light = document.getElementById('btnLight');
+  if(dark) dark.style.outline = val==='dark' ? '2.5px solid #FF6B1A' : 'none';
+  if(light) light.style.outline = val==='light' ? '2.5px solid #FF6B1A' : 'none';
+}
+function updateLayoutButtons(val){
+  const c1 = document.getElementById('btnCol1');
+  const c2 = document.getElementById('btnCol2');
+  if(c1) c1.style.outline = val==='1col' ? '2.5px solid #FF6B1A' : 'none';
+  if(c2) c2.style.outline = val==='2col' ? '2.5px solid #FF6B1A' : 'none';
+}
+
+async function setTheme(val){
+  showLoading('ກຳລັງອັບເດດ Theme...');
+  try{
+    await upsertWebConfig({theme: val});
+    updateThemeButtons(val);
+    document.getElementById('themeStatus').textContent = `ປັດຈຸບັນ: ${val==='light'?'☀️ Light':'🌙 Dark'}`;
+    showToast('ອັບເດດ Theme ສຳເລັດ ✓','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+
+async function setCatLayout(val){
+  showLoading('ກຳລັງອັບເດດ Layout...');
+  try{
+    await upsertWebConfig({cat_layout: val});
+    updateLayoutButtons(val);
+    document.getElementById('catLayoutStatus').textContent = `ປັດຈຸບັນ: ${val==='2col'?'2 ຄໍລໍາ':'1 ຄໍລໍາ'}`;
+    showToast('ອັບເດດ Layout ສຳເລັດ ✓','ok');
+  }catch(e){ showToast('Error: '+e.message,'err'); }
+  finally{ hideLoading(); }
+}
+
+async function upsertWebConfig(patch){
+  // try PATCH first (record id=1), then POST if not exists
+  try{
+    const existing = await sbFetch('/rest/v1/web_config?select=id&limit=1');
+    if(existing && existing.length){
+      await sbFetch(`/rest/v1/web_config?id=eq.${existing[0].id}`,{
+        method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify(patch)
+      });
+    } else {
+      await sbFetch('/rest/v1/web_config',{
+        method:'POST', headers:{'Prefer':'return=minimal'}, body:JSON.stringify({theme:'dark',cat_layout:'1col',...patch})
+      });
+    }
+  }catch(e){ throw e; }
 }
 
 // INIT
