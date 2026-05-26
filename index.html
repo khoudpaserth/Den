@@ -173,6 +173,9 @@
   <div class="tabs">
     <div class="tab active" onclick="switchTab(this,'tabList')">ລາຍການ</div>
     <div class="tab" id="tabAddBtn" onclick="openAddTab()">ເພີ່ມສິນຄ້າ</div>
+    <div class="tab" onclick="switchTab(this,'tabCategories')">ໝວດໝູ່</div>
+    <div class="tab" onclick="switchTab(this,'tabAds')">ໂຄສະນາ</div>
+    <div class="tab" onclick="switchTab(this,'tabContact')">ຕິດຕໍ່</div>
     <div class="tab" onclick="switchTab(this,'tabBanner')">ແບນເນີ</div>
     <div class="tab" onclick="switchTab(this,'tabAnnounce')">ປະກາດ</div>
     <div class="tab" onclick="switchTab(this,'tabWebManage')">ຈັດການເວັບ</div>
@@ -191,10 +194,9 @@
       <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input type="text" id="searchInput" placeholder="ຄົ້ນຫາຊື່ສິນຄ້າ..." oninput="renderFilteredList()"/>
     </div>
-    <div class="cat-filter">
+    <div class="cat-filter" id="catFilterBar">
       <div class="cf active" onclick="setCatFilter(this,'all')">ທັງໝົດ</div>
-      <div class="cf" onclick="setCatFilter(this,'Mobile Legends')">Mobile Legends</div>
-      <div class="cf" onclick="setCatFilter(this,'Free Fire')">Free Fire</div>
+      <!-- loaded dynamically -->
     </div>
     <div class="prod-grid" id="prodGrid">
       <div style="grid-column:1/-1;text-align:center">
@@ -223,8 +225,7 @@
       <div class="field">
         <label>ໝວດໝູ່</label>
         <select id="f_cat">
-          <option value="Mobile Legends">Mobile Legends</option>
-          <option value="Free Fire">Free Fire</option>
+          <!-- loaded dynamically from categories table -->
         </select>
       </div>
 
@@ -255,6 +256,172 @@
     </div>
   </div>
 </div>
+
+  <!-- TAB: CATEGORIES -->
+  <div class="page" id="tabCategories">
+    <div class="form-card" style="max-width:600px">
+      <h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        ຈັດການໝວດໝູ່ສິນຄ້າ
+      </h3>
+
+      <!-- Add / Edit Form -->
+      <div style="background:rgba(255,107,26,0.05);border:1px solid rgba(255,107,26,0.15);border-radius:10px;padding:16px;margin-bottom:18px">
+        <div style="font-size:.75rem;font-weight:800;color:rgba(255,200,100,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px" id="catFormLabel">➕ ເພີ່ມໝວດໝູ່ໃໝ່</div>
+        <div class="field">
+          <label>ຊື່ໝວດໝູ່ *</label>
+          <input type="text" id="cat_name" placeholder="ເຊັ່ນ: Mobile Legends, Free Fire..."/>
+        </div>
+        <div class="field">
+          <label>URL ຮູບໝວດໝູ່</label>
+          <input type="url" id="cat_img" placeholder="https://... ລິ້ງຮູບໝວດໝູ່"/>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:4px">
+          <button class="btn-save" style="flex:1" onclick="saveCategory()">ບັນທຶກ</button>
+          <button class="btn-cancel-form" onclick="cancelCatEdit()">ຍົກເລີກ</button>
+        </div>
+      </div>
+
+      <!-- Category List -->
+      <div style="font-size:.75rem;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px">ໝວດໝູ່ທັງໝົດ</div>
+      <div id="categoryList" style="display:flex;flex-direction:column;gap:8px">
+        <div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">ກຳລັງໂຫລດ...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: ADS -->
+  <div class="page" id="tabAds">
+    <div class="form-card" style="max-width:600px">
+      <h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        ລະບົບໂຄສະນາ (Ads / Banner)
+      </h3>
+
+      <!-- Ad Type Selector -->
+      <div style="display:flex;gap:8px;margin-bottom:16px">
+        <button id="adTypeInternal" onclick="setAdType('internal')"
+          style="flex:1;padding:10px;border-radius:9px;border:1.5px solid rgba(255,107,26,0.5);background:rgba(255,107,26,0.1);color:#FF8C42;font-family:'Noto Sans Lao',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">
+          🎮 ສິນຄ້າໃນເວັບ
+        </button>
+        <button id="adTypeExternal" onclick="setAdType('external')"
+          style="flex:1;padding:10px;border-radius:9px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);font-family:'Noto Sans Lao',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer">
+          🌐 ລິ້ງພາຍນອກ
+        </button>
+      </div>
+
+      <!-- Internal: pick from products -->
+      <div id="adFormInternal">
+        <div class="field">
+          <label>ຄົ້ນຫາສິນຄ້າ</label>
+          <input type="text" id="adProductSearch" placeholder="ຊື່ສິນຄ້າ..." oninput="searchAdProducts()"/>
+        </div>
+        <div id="adProductResults" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;margin-bottom:12px"></div>
+        <div id="adSelectedProduct" style="display:none;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#3FB950"></div>
+      </div>
+
+      <!-- External: image link + destination -->
+      <div id="adFormExternal" style="display:none">
+        <div class="field">
+          <label>URL ຮູບໂຄສະນາ *</label>
+          <input type="url" id="ad_img_url" placeholder="https://... ລິ້ງຮູບ"/>
+        </div>
+        <div class="field">
+          <label>URL ປາຍທາງ (ກົດແລ້ວໄປໃສ) *</label>
+          <input type="url" id="ad_dest_url" placeholder="https://..."/>
+        </div>
+        <div class="field">
+          <label>ຫົວຂໍ້ໂຄສະນາ (ທາງເລືອກ)</label>
+          <input type="text" id="ad_title" placeholder="ເຊັ່ນ: ໂປໂມຊັ່ນພິເສດ!"/>
+        </div>
+      </div>
+
+      <button class="btn-save" style="width:100%" onclick="saveAd()">+ ເພີ່ມໂຄສະນາ</button>
+
+      <!-- Ads List -->
+      <div style="margin-top:20px;font-size:.75rem;font-weight:700;color:rgba(255,255,255,0.4);margin-bottom:10px">ໂຄສະນາທັງໝົດ</div>
+      <div id="adsList" style="display:flex;flex-direction:column;gap:10px">
+        <div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">ກຳລັງໂຫລດ...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB: CONTACT -->
+  <div class="page" id="tabContact">
+    <div class="form-card" style="max-width:600px">
+      <h3>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.4 1.14 2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+        ຈັດການຂໍ້ມູນຕິດຕໍ່
+      </h3>
+      <div style="font-size:.72rem;color:rgba(255,255,255,0.35);margin-bottom:18px;line-height:1.7">
+        ຂໍ້ມູນລຸ່ມນີ້ຈະສະແດງໃນໜ້າ <span style="color:#FF8C42">contact.html</span> ໂດຍອັດຕະໂນມັດ
+      </div>
+
+      <!-- Phone -->
+      <div style="background:rgba(88,166,255,0.05);border:1.5px solid rgba(88,166,255,0.12);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="font-size:.72rem;font-weight:800;color:rgba(88,166,255,0.8);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">📞 ເບີໂທ</div>
+        <div class="field" style="margin-bottom:0">
+          <label>ເບີໂທສະแดງ</label>
+          <input type="text" id="ct_phone" placeholder="ເຊັ່ນ: 020-XXXX-XXXX"/>
+        </div>
+      </div>
+
+      <!-- Facebook -->
+      <div style="background:rgba(24,119,242,0.06);border:1.5px solid rgba(24,119,242,0.18);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="font-size:.72rem;font-weight:800;color:rgba(88,140,255,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">📘 Facebook</div>
+        <div class="field">
+          <label>URL Facebook Page</label>
+          <input type="url" id="ct_fb_url" placeholder="https://www.facebook.com/..."/>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>ຊື່ສະแดງ (label)</label>
+          <input type="text" id="ct_fb_label" placeholder="ເຊັ່ນ: ພໍ່ຄ້າໜ້າຫວານ"/>
+        </div>
+      </div>
+
+      <!-- TikTok -->
+      <div style="background:rgba(255,255,255,0.03);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="font-size:.72rem;font-weight:800;color:rgba(255,255,255,0.7);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">🎵 TikTok</div>
+        <div class="field">
+          <label>URL TikTok</label>
+          <input type="url" id="ct_tt_url" placeholder="https://www.tiktok.com/@..."/>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>ຊື່ສະแดງ (label)</label>
+          <input type="text" id="ct_tt_label" placeholder="ເຊັ່ນ: @daenthai7"/>
+        </div>
+      </div>
+
+      <!-- WhatsApp Buy -->
+      <div style="background:rgba(37,211,102,0.04);border:1.5px solid rgba(37,211,102,0.15);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="font-size:.72rem;font-weight:800;color:rgba(37,211,102,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">💬 WhatsApp — ຝ່າຍຈັດຊື້</div>
+        <div class="field">
+          <label>ເບີ WhatsApp (ລວມລະຫັດປະເທດ 856)</label>
+          <input type="text" id="ct_wa_buy" placeholder="ເຊັ່ນ: 8562095245092"/>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>ຂໍ້ຄວາມ label</label>
+          <input type="text" id="ct_wa_buy_label" placeholder="ເຊັ່ນ: ຢາກຂາຍໄອດີ? ກົດທີ່ເບີນີ້ເລີຍ!"/>
+        </div>
+      </div>
+
+      <!-- WhatsApp Sell -->
+      <div style="background:rgba(37,211,102,0.04);border:1.5px solid rgba(37,211,102,0.15);border-radius:10px;padding:14px 16px;margin-bottom:20px">
+        <div style="font-size:.72rem;font-weight:800;color:rgba(37,211,102,0.85);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">💬 WhatsApp — ຝ່າຍຂາຍ</div>
+        <div class="field">
+          <label>ເບີ WhatsApp (ລວມລະຫັດປະເທດ 856)</label>
+          <input type="text" id="ct_wa_sell" placeholder="ເຊັ່ນ: 8562096034114"/>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>ຂໍ້ຄວາມ label</label>
+          <input type="text" id="ct_wa_sell_label" placeholder="ເຊັ່ນ: ຢາກຊື້ໄອດີເກມ? ກົດບ່ອນນີ້ເລີຍ!"/>
+        </div>
+      </div>
+
+      <button class="btn-save" style="width:100%" onclick="saveContact()">💾 ບັນທຶກຂໍ້ມູນຕິດຕໍ່</button>
+      <div id="contactSaveStatus" style="margin-top:10px;font-size:.75rem;color:rgba(255,255,255,0.35);text-align:center"></div>
+    </div>
+  </div>
 
   <!-- TAB: ANNOUNCE -->
   <div class="page" id="tabAnnounce">
@@ -572,16 +739,19 @@ function switchTab(el, pageId){
   if(pageId==='tabBanner') loadBannerList();
   if(pageId==='tabAnnounce') loadAnnounce();
   if(pageId==='tabWebManage') loadWebConfig();
+  if(pageId==='tabContact') loadContact();
+  if(pageId==='tabCategories') loadCategories();
+  if(pageId==='tabAds') { loadAdsList(); loadAllProductsForAds(); }
 }
 
-function openAddTab(){
+async function openAddTab(){
   editId = null;
   document.getElementById('formTitle').textContent = 'ເພີ່ມສິນຄ້າໃໝ່';
   document.getElementById('f_name').value     = '';
   document.getElementById('f_price').value    = '';
-  document.getElementById('f_cat').value      = 'Mobile Legends';
   document.getElementById('f_desc').value     = '';
   document.getElementById('imgList').innerHTML = `<div class="img-url-row"><input type="url" placeholder="https://... URL ຮູບ"/><button class="btn-rm" onclick="removeImgRow(this)">×</button></div>`;
+  await populateCategorySelect('f_cat');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('tabAddBtn').classList.add('active');
@@ -682,9 +852,18 @@ function setCatFilter(el, val){
 async function renderList(){
   const grid = document.getElementById('prodGrid');
   grid.innerHTML = `<div style="grid-column:1/-1;text-align:center"><div class="spinner"></div><div style="color:rgba(255,255,255,0.3);font-size:.8rem">ກຳລັງໂຫລດ...</div></div>`;
-  // clear search on fresh load
   const si = document.getElementById('searchInput');
   if(si) si.value = '';
+
+  // Refresh category filter bar dynamically
+  try {
+    const cats = await sbFetch('/rest/v1/categories?select=*&order=sort_order.asc');
+    const bar = document.getElementById('catFilterBar');
+    if(bar && cats && cats.length){
+      bar.innerHTML = `<div class="cf active" onclick="setCatFilter(this,'all')">ທັງໝົດ</div>` +
+        cats.map(c=>`<div class="cf" onclick="setCatFilter(this,'${c.name}')">${c.name}</div>`).join('');
+    }
+  } catch(e){ /* keep existing filter if fails */ }
 
   try {
     let url = '/rest/v1/products?select=*&order=created_at.desc';
@@ -737,8 +916,9 @@ async function editProduct(id){
     document.getElementById('formTitle').textContent = 'ແກ້ໄຂສິນຄ້າ';
     document.getElementById('f_name').value     = p.title;
     setPriceValue(p.price);
-    document.getElementById('f_cat').value      = p.game;
     document.getElementById('f_desc').value     = p.description||'';
+
+    await populateCategorySelect('f_cat', p.game);
 
     const imgs = (p.imgs && p.imgs.length) ? p.imgs : [''];
     document.getElementById('imgList').innerHTML = imgs.map(url=>`
@@ -1133,6 +1313,290 @@ async function upsertWebConfig(patch){
     }
   }catch(e){ throw e; }
 }
+
+
+// ══════════════════════════════
+// ── HELPER: populate category select ──
+// ══════════════════════════════
+async function populateCategorySelect(selectId, selectedVal){
+  const sel = document.getElementById(selectId);
+  if(!sel) return;
+  try {
+    const cats = await sbFetch('/rest/v1/categories?select=*&order=sort_order.asc');
+    if(cats && cats.length){
+      sel.innerHTML = cats.map(c=>`<option value="${c.name}" ${c.name===selectedVal?'selected':''}>${c.name}</option>`).join('');
+    } else {
+      sel.innerHTML = `<option value="">-- ຍັງບໍ່ມີໝວດໝູ່ --</option>`;
+    }
+  } catch(e){
+    sel.innerHTML = `<option value="Mobile Legends" ${selectedVal==='Mobile Legends'?'selected':''}>Mobile Legends</option>
+                     <option value="Free Fire" ${selectedVal==='Free Fire'?'selected':''}>Free Fire</option>`;
+  }
+}
+
+// ══════════════════════════════
+// ── CATEGORIES ──
+// ══════════════════════════════
+let editCatId = null;
+
+async function loadCategories(){
+  const el = document.getElementById('categoryList');
+  el.innerHTML = `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">ກຳລັງໂຫລດ...</div>`;
+  try {
+    const data = await sbFetch('/rest/v1/categories?select=*&order=sort_order.asc');
+    if(!data || !data.length){
+      el.innerHTML = `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.25);font-size:.82rem">ຍັງບໍ່ມີໝວດໝູ່ — ເພີ່ມດ້ານເທິງ</div>`;
+      return;
+    }
+    el.innerHTML = data.map(c=>`
+      <div style="display:flex;align-items:center;gap:10px;background:#0B1628;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px">
+        ${c.img_url ? `<img src="${c.img_url}" style="width:52px;height:36px;object-fit:cover;border-radius:6px;flex-shrink:0" onerror="this.style.display='none'"/>` : `<div style="width:52px;height:36px;background:rgba(255,107,26,0.1);border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.7rem;color:rgba(255,107,26,0.5)">NO IMG</div>`}
+        <span style="flex:1;font-size:.85rem;font-weight:700">${c.name}</span>
+        <button onclick="editCategory(${c.id},'${c.name.replace(/'/g,"\\'")}','${(c.img_url||'').replace(/'/g,"\\'")}' )"
+          style="background:rgba(88,166,255,0.12);color:#58A6FF;border:1px solid rgba(88,166,255,0.2);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:.72rem;font-weight:700">ແກ້ໄຂ</button>
+        <button onclick="deleteCategory(${c.id})"
+          style="background:rgba(248,81,73,0.1);color:#F85149;border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:.72rem;font-weight:700">ລົບ</button>
+      </div>`).join('');
+  } catch(e){ el.innerHTML = `<div style="color:#F85149;font-size:.8rem">${e.message}</div>`; }
+}
+
+function editCategory(id, name, img){
+  editCatId = id;
+  document.getElementById('cat_name').value = name;
+  document.getElementById('cat_img').value  = img;
+  document.getElementById('catFormLabel').textContent = '✏️ ແກ້ໄຂໝວດໝູ່';
+}
+
+function cancelCatEdit(){
+  editCatId = null;
+  document.getElementById('cat_name').value = '';
+  document.getElementById('cat_img').value  = '';
+  document.getElementById('catFormLabel').textContent = '➕ ເພີ່ມໝວດໝູ່ໃໝ່';
+}
+
+async function saveCategory(){
+  const name = document.getElementById('cat_name').value.trim();
+  const img  = document.getElementById('cat_img').value.trim();
+  if(!name){ showToast('ໃສ່ຊື່ໝວດໝູ່ດ້ວຍ','err'); return; }
+  try {
+    showLoading('ກຳລັງບັນທຶກໝວດໝູ່...');
+    if(editCatId){
+      await sbFetch(`/rest/v1/categories?id=eq.${editCatId}`,{
+        method:'PATCH', headers:{'Prefer':'return=minimal'},
+        body: JSON.stringify({name, img_url: img||null})
+      });
+      showToast('ອັບເດດໝວດໝູ່ສຳເລັດ ✓','ok');
+    } else {
+      await sbFetch('/rest/v1/categories',{
+        method:'POST', headers:{'Prefer':'return=minimal'},
+        body: JSON.stringify({name, img_url: img||null, sort_order: Date.now()})
+      });
+      showToast('ເພີ່ມໝວດໝູ່ສຳເລັດ ✓','ok');
+    }
+    cancelCatEdit();
+    hideLoading();
+    loadCategories();
+  } catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
+}
+
+async function deleteCategory(id){
+  if(!confirm('ລົບໝວດໝູ່ນີ້?')) return;
+  try {
+    showLoading('ກຳລັງລົບ...');
+    await sbFetch(`/rest/v1/categories?id=eq.${id}`,{ method:'DELETE' });
+    hideLoading();
+    showToast('ລົບໝວດໝູ່ແລ້ວ','ok');
+    loadCategories();
+  } catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
+}
+
+// ══════════════════════════════
+// ── ADS ──
+// ══════════════════════════════
+let currentAdType = 'internal';
+let selectedAdProduct = null;
+let allProductsCache = [];
+
+function setAdType(type){
+  currentAdType = type;
+  selectedAdProduct = null;
+  document.getElementById('adSelectedProduct').style.display = 'none';
+  document.getElementById('adProductResults').innerHTML = '';
+  if(type === 'internal'){
+    document.getElementById('adFormInternal').style.display = 'block';
+    document.getElementById('adFormExternal').style.display = 'none';
+    document.getElementById('adTypeInternal').style.borderColor = 'rgba(255,107,26,0.5)';
+    document.getElementById('adTypeInternal').style.background  = 'rgba(255,107,26,0.1)';
+    document.getElementById('adTypeInternal').style.color       = '#FF8C42';
+    document.getElementById('adTypeExternal').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('adTypeExternal').style.background  = 'rgba(255,255,255,0.04)';
+    document.getElementById('adTypeExternal').style.color       = 'rgba(255,255,255,0.5)';
+  } else {
+    document.getElementById('adFormInternal').style.display = 'none';
+    document.getElementById('adFormExternal').style.display = 'block';
+    document.getElementById('adTypeExternal').style.borderColor = 'rgba(255,107,26,0.5)';
+    document.getElementById('adTypeExternal').style.background  = 'rgba(255,107,26,0.1)';
+    document.getElementById('adTypeExternal').style.color       = '#FF8C42';
+    document.getElementById('adTypeInternal').style.borderColor = 'rgba(255,255,255,0.1)';
+    document.getElementById('adTypeInternal').style.background  = 'rgba(255,255,255,0.04)';
+    document.getElementById('adTypeInternal').style.color       = 'rgba(255,255,255,0.5)';
+  }
+}
+
+async function loadAllProductsForAds(){
+  try {
+    allProductsCache = await sbFetch('/rest/v1/products?select=id,title,game,imgs,price&order=created_at.desc') || [];
+  } catch(e){ allProductsCache = []; }
+}
+
+function searchAdProducts(){
+  const q = (document.getElementById('adProductSearch').value||'').toLowerCase().trim();
+  const filtered = q ? allProductsCache.filter(p=>p.title&&p.title.toLowerCase().includes(q)) : allProductsCache.slice(0,8);
+  const el = document.getElementById('adProductResults');
+  if(!filtered.length){
+    el.innerHTML = `<div style="font-size:.78rem;color:rgba(255,255,255,0.3);padding:8px">ບໍ່ພົບສິນຄ້າ</div>`;
+    return;
+  }
+  el.innerHTML = filtered.slice(0,10).map(p=>`
+    <div onclick="selectAdProduct(${JSON.stringify(p).replace(/"/g,'&quot;')})"
+      style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:#0B1628;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='rgba(255,107,26,0.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
+      ${p.imgs&&p.imgs[0] ? `<img src="${p.imgs[0]}" style="width:44px;height:30px;object-fit:cover;border-radius:5px;flex-shrink:0"/>` : '<div style="width:44px;height:30px;background:rgba(255,255,255,0.06);border-radius:5px;flex-shrink:0"></div>'}
+      <div style="flex:1">
+        <div style="font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title}</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,0.35)">${p.game} · ${Number(p.price).toLocaleString()} ກີບ</div>
+      </div>
+    </div>`).join('');
+}
+
+function selectAdProduct(p){
+  selectedAdProduct = p;
+  document.getElementById('adProductResults').innerHTML = '';
+  document.getElementById('adProductSearch').value = '';
+  const el = document.getElementById('adSelectedProduct');
+  el.style.display = 'block';
+  el.innerHTML = `✓ ເລືອກແລ້ວ: <strong>${p.title}</strong> (${p.game})`;
+}
+
+async function saveAd(){
+  let payload = {};
+  if(currentAdType === 'internal'){
+    if(!selectedAdProduct){ showToast('ກະລຸນາເລືອກສິນຄ້າກ່ອນ','err'); return; }
+    payload = {
+      type: 'internal',
+      product_id: selectedAdProduct.id,
+      title: selectedAdProduct.title,
+      img_url: (selectedAdProduct.imgs&&selectedAdProduct.imgs[0]) || null,
+      dest_url: null,
+      sort_order: Date.now()
+    };
+  } else {
+    const img  = document.getElementById('ad_img_url').value.trim();
+    const dest = document.getElementById('ad_dest_url').value.trim();
+    const title= document.getElementById('ad_title').value.trim();
+    if(!img || !dest){ showToast('ໃສ່ URL ຮູບ ແລະ URL ປາຍທາງດ້ວຍ','err'); return; }
+    payload = { type:'external', product_id:null, title:title||'ໂຄສະນາ', img_url:img, dest_url:dest, sort_order:Date.now() };
+  }
+  try {
+    showLoading('ກຳລັງເພີ່ມໂຄສະນາ...');
+    await sbFetch('/rest/v1/ads',{ method:'POST', headers:{'Prefer':'return=minimal'}, body:JSON.stringify(payload) });
+    selectedAdProduct = null;
+    document.getElementById('adSelectedProduct').style.display = 'none';
+    document.getElementById('ad_img_url').value  = '';
+    document.getElementById('ad_dest_url').value = '';
+    document.getElementById('ad_title').value    = '';
+    hideLoading();
+    showToast('ເພີ່ມໂຄສະນາສຳເລັດ ✓','ok');
+    loadAdsList();
+  } catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
+}
+
+async function loadAdsList(){
+  const el = document.getElementById('adsList');
+  el.innerHTML = `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.3)">ກຳລັງໂຫລດ...</div>`;
+  try {
+    const data = await sbFetch('/rest/v1/ads?select=*&order=sort_order.asc') || [];
+    if(!data.length){
+      el.innerHTML = `<div style="text-align:center;padding:20px;color:rgba(255,255,255,0.25);font-size:.82rem">ຍັງບໍ່ມີໂຄສະນາ</div>`;
+      return;
+    }
+    el.innerHTML = data.map(a=>`
+      <div style="display:flex;align-items:center;gap:10px;background:#0B1628;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 12px">
+        ${a.img_url ? `<img src="${a.img_url}" style="width:64px;height:40px;object-fit:cover;border-radius:6px;flex-shrink:0" onerror="this.style.display='none'"/>` : '<div style="width:64px;height:40px;background:rgba(255,255,255,0.04);border-radius:6px;flex-shrink:0"></div>'}
+        <div style="flex:1;min-width:0">
+          <div style="font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${a.title||'—'}</div>
+          <div style="font-size:.65rem;color:rgba(255,255,255,0.3);margin-top:2px">${a.type==='internal'?'🎮 ສິນຄ້າໃນເວັບ':'🌐 ລິ້ງພາຍນອກ'}</div>
+        </div>
+        <button onclick="deleteAd(${a.id})"
+          style="background:rgba(248,81,73,0.1);color:#F85149;border:1px solid rgba(248,81,73,0.15);border-radius:6px;padding:5px 10px;cursor:pointer;font-size:.72rem;font-weight:700;flex-shrink:0">ລົບ</button>
+      </div>`).join('');
+  } catch(e){ el.innerHTML = `<div style="color:#F85149;font-size:.8rem">${e.message}</div>`; }
+}
+
+async function deleteAd(id){
+  try {
+    showLoading('ກຳລັງລົບ...');
+    await sbFetch(`/rest/v1/ads?id=eq.${id}`,{ method:'DELETE' });
+    hideLoading();
+    showToast('ລົບໂຄສະນາແລ້ວ','ok');
+    loadAdsList();
+  } catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
+}
+
+// ══════════════════════════════
+// ── CONTACT MANAGEMENT ──
+// ══════════════════════════════
+async function loadContact(){
+  try {
+    const data = await sbFetch('/rest/v1/contacts?select=*&limit=1');
+    if(data && data.length){
+      const c = data[0];
+      document.getElementById('ct_phone').value        = c.phone||'';
+      document.getElementById('ct_fb_url').value       = c.facebook_url||'';
+      document.getElementById('ct_fb_label').value     = c.facebook_label||'';
+      document.getElementById('ct_tt_url').value       = c.tiktok_url||'';
+      document.getElementById('ct_tt_label').value     = c.tiktok_label||'';
+      document.getElementById('ct_wa_buy').value       = c.wa_buy_number||'';
+      document.getElementById('ct_wa_buy_label').value = c.wa_buy_label||'';
+      document.getElementById('ct_wa_sell').value      = c.wa_sell_number||'';
+      document.getElementById('ct_wa_sell_label').value= c.wa_sell_label||'';
+      document.getElementById('contactSaveStatus').textContent = 'ໂຫລດຂໍ້ມູນສຳເລັດ ✓';
+    }
+  } catch(e){ showToast('Error loading contact: '+e.message,'err'); }
+}
+
+async function saveContact(){
+  const payload = {
+    phone:          document.getElementById('ct_phone').value.trim(),
+    facebook_url:   document.getElementById('ct_fb_url').value.trim(),
+    facebook_label: document.getElementById('ct_fb_label').value.trim(),
+    tiktok_url:     document.getElementById('ct_tt_url').value.trim(),
+    tiktok_label:   document.getElementById('ct_tt_label').value.trim(),
+    wa_buy_number:  document.getElementById('ct_wa_buy').value.trim(),
+    wa_buy_label:   document.getElementById('ct_wa_buy_label').value.trim(),
+    wa_sell_number: document.getElementById('ct_wa_sell').value.trim(),
+    wa_sell_label:  document.getElementById('ct_wa_sell_label').value.trim(),
+  };
+  try {
+    showLoading('ກຳລັງບັນທຶກຂໍ້ມູນຕິດຕໍ່...');
+    const existing = await sbFetch('/rest/v1/contacts?select=id&limit=1');
+    if(existing && existing.length){
+      await sbFetch(`/rest/v1/contacts?id=eq.${existing[0].id}`,{
+        method:'PATCH', headers:{'Prefer':'return=minimal'}, body:JSON.stringify(payload)
+      });
+    } else {
+      await sbFetch('/rest/v1/contacts',{
+        method:'POST', headers:{'Prefer':'return=minimal'}, body:JSON.stringify(payload)
+      });
+    }
+    hideLoading();
+    showToast('ບັນທຶກຂໍ້ມູນຕິດຕໍ່ສຳເລັດ ✓','ok');
+    document.getElementById('contactSaveStatus').textContent = 'ບັນທຶກສຳເລັດ ✓ — ໜ້າ contact.html ຈະດຶງຂໍ້ມູນໃໝ່ທັນທີ';
+  } catch(e){ hideLoading(); showToast('Error: '+e.message,'err'); }
+}
+
+// init setAdType on load
+setAdType('internal');
 
 // INIT
 if(sessionStorage.getItem('ok')==='1') renderList();
