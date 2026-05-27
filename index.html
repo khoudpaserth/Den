@@ -310,13 +310,16 @@
         </button>
       </div>
 
-      <!-- Internal: pick from products -->
+      <!-- Internal: scroll all products to pick -->
       <div id="adFormInternal">
-        <div class="field">
-          <label>ຄົ້ນຫາສິນຄ້າ</label>
-          <input type="text" id="adProductSearch" placeholder="ຊື່ສິນຄ້າ..." oninput="searchAdProducts()"/>
+        <div style="font-size:.72rem;color:rgba(255,255,255,0.35);margin-bottom:8px">ເລືອກສິນຄ້າທີ່ຢາກໂຄສະນາ (scroll ເລືອກໄດ້ ຫຼື ຄົ້ນຫາ)</div>
+        <div class="field" style="margin-bottom:8px">
+          <input type="text" id="adProductSearch" placeholder="🔍 ຄົ້ນຫາສິນຄ້າ..." oninput="searchAdProducts()" style="background:#0B1628;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:9px 13px;color:#fff;font-family:'Noto Sans Lao',sans-serif;font-size:.82rem;outline:none;width:100%"/>
         </div>
-        <div id="adProductResults" style="display:flex;flex-direction:column;gap:6px;max-height:220px;overflow-y:auto;margin-bottom:12px"></div>
+        <!-- All products list — always visible, scrollable -->
+        <div id="adProductResults" style="display:flex;flex-direction:column;gap:6px;max-height:320px;overflow-y:auto;margin-bottom:12px;border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:6px;background:rgba(0,0,0,0.2)">
+          <div style="text-align:center;padding:16px;color:rgba(255,255,255,0.25);font-size:.78rem">ກຳລັງໂຫລດສິນຄ້າ...</div>
+        </div>
         <div id="adSelectedProduct" style="display:none;background:rgba(37,211,102,0.08);border:1px solid rgba(37,211,102,0.2);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:.82rem;color:#3FB950"></div>
       </div>
 
@@ -357,12 +360,15 @@
         ຂໍ້ມູນລຸ່ມນີ້ຈະສະແດງໃນໜ້າ <span style="color:#FF8C42">contact.html</span> ໂດຍອັດຕະໂນມັດ
       </div>
 
-      <!-- Phone -->
-      <div style="background:rgba(88,166,255,0.05);border:1.5px solid rgba(88,166,255,0.12);border-radius:10px;padding:14px 16px;margin-bottom:14px">
-        <div style="font-size:.72rem;font-weight:800;color:rgba(88,166,255,0.8);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px">📞 ເບີໂທ</div>
+      <!-- Buy WA Number (ເບີທີ່ລູກຄ້າກົດ "ສັ່ງຊື້" ແລ້ວໄປ) -->
+      <div style="background:rgba(255,107,26,0.07);border:2px solid rgba(255,107,26,0.35);border-radius:10px;padding:14px 16px;margin-bottom:14px">
+        <div style="font-size:.72rem;font-weight:800;color:#FF8C42;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px">🛒 ເບີ WhatsApp ສັ່ງຊື້</div>
+        <div style="font-size:.7rem;color:rgba(255,200,100,0.7);margin-bottom:10px;line-height:1.6">
+          ⚡ ເບີນີ້ = ລູກຄ້າກົດປຸ່ມ <strong style="color:#FF8C42">"ສັ່ງຊື້ດຽວນີ້ເລີຍ!"</strong> ໃນໜ້າສິນຄ້າ ຈະ redirect ໄປ WhatsApp ເບີນີ້ທັນທີ
+        </div>
         <div class="field" style="margin-bottom:0">
-          <label>ເບີໂທສະแดງ</label>
-          <input type="text" id="ct_phone" placeholder="ເຊັ່ນ: 020-XXXX-XXXX"/>
+          <label>ເບີ WhatsApp (ລວມລະຫັດປະເທດ 856) *</label>
+          <input type="text" id="ct_buy_wa" placeholder="ເຊັ່ນ: 8562096034114"/>
         </div>
       </div>
 
@@ -741,8 +747,7 @@ function switchTab(el, pageId){
   if(pageId==='tabWebManage') loadWebConfig();
   if(pageId==='tabContact') loadContact();
   if(pageId==='tabCategories') loadCategories();
-  if(pageId==='tabAds') { loadAdsList(); loadAllProductsForAds(); }
-}
+  if(pageId==='tabAds') { loadAdsList(); loadAllProductsForAds(); }}
 
 async function openAddTab(){
   editId = null;
@@ -1447,32 +1452,48 @@ async function loadAllProductsForAds(){
   try {
     allProductsCache = await sbFetch('/rest/v1/products?select=id,title,game,imgs,price&order=created_at.desc') || [];
   } catch(e){ allProductsCache = []; }
+  // Show all products immediately when tab opens
+  _renderAdProductList(allProductsCache);
+}
+
+function _renderAdProductList(list){
+  const el = document.getElementById('adProductResults');
+  if(!el) return;
+  if(!list.length){
+    el.innerHTML = `<div style="font-size:.78rem;color:rgba(255,255,255,0.3);padding:12px;text-align:center">ບໍ່ພົບສິນຄ້າ</div>`;
+    return;
+  }
+  el.innerHTML = list.map(p=>`
+    <div onclick="selectAdProduct(${JSON.stringify(p).replace(/"/g,'&quot;')})"
+      id="adprod_${p.id}"
+      style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:#0B1628;cursor:pointer;transition:border-color .15s"
+      onmouseover="this.style.borderColor='rgba(255,107,26,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.06)'">
+      ${p.imgs&&p.imgs[0] ? `<img src="${p.imgs[0]}" style="width:48px;height:34px;object-fit:cover;border-radius:5px;flex-shrink:0"/>` : '<div style="width:48px;height:34px;background:rgba(255,255,255,0.05);border-radius:5px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:rgba(255,255,255,0.2)">NO IMG</div>'}
+      <div style="flex:1;min-width:0">
+        <div style="font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title}</div>
+        <div style="font-size:.68rem;color:rgba(255,255,255,0.35);margin-top:1px">${p.game} · ${Number(p.price).toLocaleString()} ກີບ</div>
+      </div>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="rgba(255,107,26,0.5)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+    </div>`).join('');
 }
 
 function searchAdProducts(){
   const q = (document.getElementById('adProductSearch').value||'').toLowerCase().trim();
-  const filtered = q ? allProductsCache.filter(p=>p.title&&p.title.toLowerCase().includes(q)) : allProductsCache.slice(0,8);
-  const el = document.getElementById('adProductResults');
-  if(!filtered.length){
-    el.innerHTML = `<div style="font-size:.78rem;color:rgba(255,255,255,0.3);padding:8px">ບໍ່ພົບສິນຄ້າ</div>`;
-    return;
-  }
-  el.innerHTML = filtered.slice(0,10).map(p=>`
-    <div onclick="selectAdProduct(${JSON.stringify(p).replace(/"/g,'&quot;')})"
-      style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.08);background:#0B1628;cursor:pointer;transition:border-color .15s"
-      onmouseover="this.style.borderColor='rgba(255,107,26,0.35)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.08)'">
-      ${p.imgs&&p.imgs[0] ? `<img src="${p.imgs[0]}" style="width:44px;height:30px;object-fit:cover;border-radius:5px;flex-shrink:0"/>` : '<div style="width:44px;height:30px;background:rgba(255,255,255,0.06);border-radius:5px;flex-shrink:0"></div>'}
-      <div style="flex:1">
-        <div style="font-size:.8rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${p.title}</div>
-        <div style="font-size:.68rem;color:rgba(255,255,255,0.35)">${p.game} · ${Number(p.price).toLocaleString()} ກີບ</div>
-      </div>
-    </div>`).join('');
+  const filtered = q
+    ? allProductsCache.filter(p => p.title && p.title.toLowerCase().includes(q))
+    : allProductsCache;
+  _renderAdProductList(filtered);
 }
 
 function selectAdProduct(p){
   selectedAdProduct = p;
-  document.getElementById('adProductResults').innerHTML = '';
-  document.getElementById('adProductSearch').value = '';
+  // Highlight selected in list
+  document.querySelectorAll('[id^="adprod_"]').forEach(el => {
+    el.style.borderColor = 'rgba(255,255,255,0.06)';
+    el.style.background  = '#0B1628';
+  });
+  const sel = document.getElementById('adprod_' + p.id);
+  if(sel){ sel.style.borderColor='rgba(37,211,102,0.4)'; sel.style.background='rgba(37,211,102,0.05)'; }
   const el = document.getElementById('adSelectedProduct');
   el.style.display = 'block';
   el.innerHTML = `✓ ເລືອກແລ້ວ: <strong>${p.title}</strong> (${p.game})`;
@@ -1551,7 +1572,7 @@ async function loadContact(){
     const data = await sbFetch('/rest/v1/contacts?select=*&limit=1');
     if(data && data.length){
       const c = data[0];
-      document.getElementById('ct_phone').value        = c.phone||'';
+      document.getElementById('ct_buy_wa').value       = c.buy_wa_number||c.wa_sell_number||'';
       document.getElementById('ct_fb_url').value       = c.facebook_url||'';
       document.getElementById('ct_fb_label').value     = c.facebook_label||'';
       document.getElementById('ct_tt_url').value       = c.tiktok_url||'';
@@ -1567,7 +1588,7 @@ async function loadContact(){
 
 async function saveContact(){
   const payload = {
-    phone:          document.getElementById('ct_phone').value.trim(),
+    buy_wa_number:  document.getElementById('ct_buy_wa').value.trim(),
     facebook_url:   document.getElementById('ct_fb_url').value.trim(),
     facebook_label: document.getElementById('ct_fb_label').value.trim(),
     tiktok_url:     document.getElementById('ct_tt_url').value.trim(),
