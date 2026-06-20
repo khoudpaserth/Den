@@ -73,6 +73,15 @@
     .btn-add-img{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:9px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.12);color:rgba(255,255,255,0.4);font-size:.78rem;font-weight:700;cursor:pointer;transition:all .18s;}
     .btn-add-img:hover{border-color:rgba(255,107,26,0.35);color:#FF8C42}
 
+    .img-upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px;margin-bottom:4px}
+    .img-tile{position:relative;aspect-ratio:1/1;border-radius:8px;overflow:hidden;background:#0B1628;border:1px solid rgba(255,255,255,0.08)}
+    .img-tile img{width:100%;height:100%;object-fit:cover;display:block}
+    .img-tile-spin,.img-tile-err{width:100%;height:100%;display:flex;align-items:center;justify-content:center}
+    .img-tile-err{color:#F85149;font-size:1.3rem}
+    .img-tile-rm{position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;border:none;background:rgba(0,0,0,0.65);color:#fff;font-size:.78rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2}
+    .img-tile-add{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border:1px dashed rgba(255,255,255,0.15);color:rgba(255,255,255,0.4);cursor:pointer;font-size:.62rem;font-weight:700;text-align:center;transition:all .18s}
+    .img-tile-add:hover{border-color:rgba(255,107,26,0.4);color:#FF8C42}
+
     /* Extras (key-value) */
     .extra-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
     .extra-row input{flex:1}
@@ -230,17 +239,8 @@
       </div>
 
       <div class="field">
-        <label>ຮູບພາບ (URL) — ເພີ່ມໄດ້ຫຼາຍຮູບ</label>
-        <div class="img-url-list" id="imgList">
-          <div class="img-url-row">
-            <input type="url" placeholder="https://... URL ຮູບ"/>
-            <button class="btn-rm" onclick="removeImgRow(this)">×</button>
-          </div>
-        </div>
-        <button class="btn-add-img" onclick="addImgRow()">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          ເພີ່ມ URL ຮູບ
-        </button>
+        <label>ຮູບພາບ — ກົດເພື່ອອັບໂຫລດ (ເພີ່ມໄດ້ຫຼາຍຮູບ)</label>
+        <div class="img-upload-grid" id="imgList"></div>
       </div>
 
 
@@ -755,7 +755,7 @@ async function openAddTab(){
   document.getElementById('f_name').value     = '';
   document.getElementById('f_price').value    = '';
   document.getElementById('f_desc').value     = '';
-  document.getElementById('imgList').innerHTML = `<div class="img-url-row"><input type="url" placeholder="https://... URL ຮູບ"/><button class="btn-rm" onclick="removeImgRow(this)">×</button></div>`;
+  resetFormImages([]);
   await populateCategorySelect('f_cat');
   document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -767,16 +767,136 @@ function cancelForm(){
   document.querySelectorAll('.tab')[0].click();
 }
 
-// ── IMG ROWS ──
-function addImgRow(){
-  const row = document.createElement('div');
-  row.className='img-url-row';
-  row.innerHTML=`<input type="url" placeholder="https://... URL ຮູບ"/><button class="btn-rm" onclick="removeImgRow(this)">×</button>`;
-  document.getElementById('imgList').appendChild(row);
+// ── IMAGE UPLOAD (Supabase Storage) ──
+const STORAGE_BUCKET     = 'product-images';
+const STORAGE_PUBLIC_BASE = `${SB_URL}/storage/v1/object/public/${STORAGE_BUCKET}/`;
+
+let formImages       = []; // { url, path, status:'uploading'|'done'|'error', isNew }
+let pendingDeletePaths = []; // paths of EXISTING images removed during edit — deleted only after save succeeds
+
+function extractStoragePath(url){
+  if(!url || !url.startsWith(STORAGE_PUBLIC_BASE)) return null;
+  return url.slice(STORAGE_PUBLIC_BASE.length);
 }
-function removeImgRow(btn){
-  const list = document.getElementById('imgList');
-  if(list.children.length > 1) btn.parentElement.remove();
+
+function resetFormImages(list){
+  formImages = (list||[]).map(url => ({ url, path: extractStoragePath(url), status:'done', isNew:false }));
+  pendingDeletePaths = [];
+  renderImgGrid();
+}
+
+function renderImgGrid(){
+  const wrap = document.getElementById('imgList');
+  if(!wrap) return;
+  wrap.innerHTML = formImages.map((img, i) => `
+    <div class="img-tile">
+      ${img.status === 'uploading'
+        ? `<div class="img-tile-spin"><div class="spinner" style="margin:0;width:20px;height:20px;border-width:2.5px"></div></div>`
+        : img.status === 'error'
+          ? `<div class="img-tile-err">⚠</div>`
+          : `<img src="${img.url}" alt=""/>`}
+      <button class="img-tile-rm" onclick="removeImgTile(${i})" ${img.status==='uploading'?'disabled':''}>×</button>
+    </div>`).join('') + `
+    <label class="img-tile img-tile-add">
+      <input type="file" accept="image/*" multiple onchange="handleFileSelect(this)" style="display:none"/>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <span>ເພີ່ມຮູບ</span>
+    </label>`;
+}
+
+async function handleFileSelect(input){
+  const files = [...input.files];
+  input.value = ''; // ให้เลือกไฟล์เดิมซ้ำได้
+  for(const file of files){
+    if(!file.type.startsWith('image/')) continue;
+    const entry = { url:'', path:null, status:'uploading', isNew:true };
+    formImages.push(entry);
+    renderImgGrid();
+    try {
+      const blob = await compressImage(file);
+      const path = `products/${Date.now()}_${Math.random().toString(36).slice(2,8)}.jpg`;
+      await sbStorageUpload(path, blob);
+      entry.url    = STORAGE_PUBLIC_BASE + path;
+      entry.path   = path;
+      entry.status = 'done';
+    } catch(e){
+      console.error(e);
+      entry.status = 'error';
+      showToast('ອັບໂຫລດຮູບບໍ່ສຳເລັດ: ' + e.message, 'err');
+    }
+    renderImgGrid();
+  }
+}
+
+function removeImgTile(i){
+  const img = formImages[i];
+  if(!img || img.status === 'uploading') return;
+  if(img.path){
+    if(img.isNew){
+      // เพิ่งอัปโหลดใน session นี้ ยังไม่ได้ผูกกับสินค้าไหน → ลบออกจาก Storage ได้เลย
+      sbStorageDelete([img.path]).catch(e=>console.warn('storage delete fail', e));
+    } else {
+      // รูปเดิมของสินค้า → รอจนกว่าจะบันทึกสำเร็จก่อนค่อยลบจริง (กันรูปหายถ้ากด "ยกเลิก")
+      pendingDeletePaths.push(img.path);
+    }
+  }
+  formImages.splice(i,1);
+  renderImgGrid();
+}
+
+/* ── ย่อ/บีบอัดรูปก่อนอัปโหลด (canvas resize + JPEG re-encode) ── */
+function compressImage(file, maxDim = 1280, quality = 0.8){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('อ่านไฟล์ไม่ได้'));
+    reader.onload = e => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('ไฟล์รูปเสีย'));
+      img.onload = () => {
+        let { width, height } = img;
+        if(width > maxDim || height > maxDim){
+          if(width > height){ height = Math.round(height * maxDim/width); width = maxDim; }
+          else { width = Math.round(width * maxDim/height); height = maxDim; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width; canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        canvas.toBlob(blob => blob ? resolve(blob) : reject(new Error('compress failed')), 'image/jpeg', quality);
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* ── Supabase Storage REST ── */
+async function sbStorageUpload(path, blob){
+  const res = await fetch(`${SB_URL}/storage/v1/object/${STORAGE_BUCKET}/${path}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': blob.type || 'image/jpeg'
+    },
+    body: blob
+  });
+  if(!res.ok) throw new Error(await res.text());
+  return res.json();
+}
+
+async function sbStorageDelete(paths){
+  if(!paths || !paths.length) return;
+  const res = await fetch(`${SB_URL}/storage/v1/object/${STORAGE_BUCKET}`, {
+    method: 'DELETE',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': 'Bearer ' + SB_KEY,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ prefixes: paths })
+  });
+  if(!res.ok) throw new Error(await res.text());
+  return res.json();
 }
 
 
@@ -787,7 +907,12 @@ async function saveProduct(){
   const price    = getPriceValue();
   const cat      = document.getElementById('f_cat').value;
   const desc  = document.getElementById('f_desc').value.trim();
-  const imgs  = [...document.querySelectorAll('#imgList input')].map(i=>i.value.trim()).filter(Boolean);
+
+  if(formImages.some(i => i.status === 'uploading')){
+    showToast('ກຳລັງອັບໂຫລດຮູບຢູ່ ກະລຸນາລໍຖ້າ','err');
+    return;
+  }
+  const imgs  = formImages.filter(i => i.status === 'done').map(i => i.url);
 
   if(!name || !price){
     showToast('ໃສ່ຊື່ ແລະ ລາຄາດ້ວຍ','err');
@@ -836,6 +961,10 @@ async function saveProduct(){
       showToast('ເພີ່ມສຳເລັດ ✓','ok');
     }
     editId = null;
+    if(pendingDeletePaths.length){
+      sbStorageDelete(pendingDeletePaths).catch(e=>console.warn('storage cleanup fail', e));
+      pendingDeletePaths = [];
+    }
     hideLoading();
     cancelForm();
     setTimeout(()=>renderList(), 400);
@@ -925,12 +1054,8 @@ async function editProduct(id){
 
     await populateCategorySelect('f_cat', p.game);
 
-    const imgs = (p.imgs && p.imgs.length) ? p.imgs : [''];
-    document.getElementById('imgList').innerHTML = imgs.map(url=>`
-      <div class="img-url-row">
-        <input type="url" placeholder="https://..." value="${url}"/>
-        <button class="btn-rm" onclick="removeImgRow(this)">×</button>
-      </div>`).join('');
+    const imgs = (p.imgs && p.imgs.length) ? p.imgs : [];
+    resetFormImages(imgs);
 
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
@@ -969,7 +1094,12 @@ function openDel(id, name){
 async function confirmDel(){
   try {
     showLoading('ກຳລັງລົບສິນຄ້າ...');
+    const prod = products.find(p => String(p.id) === String(delId));
     await sbFetch(`/rest/v1/products?id=eq.${encodeURIComponent(delId)}`, { method:'DELETE', headers:{'Prefer':'return=minimal'} });
+    if(prod && prod.imgs && prod.imgs.length){
+      const paths = prod.imgs.map(extractStoragePath).filter(Boolean);
+      if(paths.length) sbStorageDelete(paths).catch(e=>console.warn('storage cleanup fail', e));
+    }
     closeDelOverlay();
     hideLoading();
     renderList();
